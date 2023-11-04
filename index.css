@@ -72,7 +72,11 @@ form {
 }
 
 .is-checked {
-  box-shadow: var(--box-shadow-green);
+  box-shadow: var(--box-shadow-green) !important;
+}
+
+.no-outline {
+  outline: none;
 }
 
 .todo {

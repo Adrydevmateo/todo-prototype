@@ -1,6 +1,7 @@
+const header = document.querySelector("header")
 const todo_list = document.querySelector("[data-list='todos']")
 const input = document.querySelector("[data-input='todo']")
-const todo_id = crypto.randomUUID()
+const button_save = document.querySelector("[data-button='save-progress']")
 
 const button_submit = document.querySelector("[data-button='submit']")
 
@@ -11,14 +12,15 @@ button_submit.addEventListener("click", (event) => {
 })
 
 function useTodo(target) {
-  const todos = []
+  let todos = []
+  button_save.addEventListener("click", () => SaveProgress())
 
-  function CreateTodo(todo) {
-    const id = crypto.randomUUID()
-    todos.push({
-      id: id,
+  function CreateTodo(todo, _todo_class_list, _todo_value_class_list, _button_check_class_list, _button_edit_class_list, _button_delete_class_list) {
+    const new_todo = {
       value: todo,
-    })
+      is_checked: false,
+      delete: false,
+    }
 
     const li = document.createElement("li")
     const p = document.createElement("p")
@@ -27,17 +29,16 @@ function useTodo(target) {
     const button_edit = CreateButton("", "ZondiconsCompose.svg", "Edit todo button")
     const button_delete = CreateButton("", "ZondiconsCloseOutline.svg", "Delete todo button")
 
-    li.id = id
     p.innerText = todo
     button_check.addEventListener("click", () => CheckTodo())
     button_edit.addEventListener("click", () => EditTodo())
     button_delete.addEventListener("click", () => DeleteTodo())
 
-    li.classList.add("todo")
-    button_check.classList.add("button-check", "button-control")
-    button_edit.classList.add("button-edit")
-    button_delete.classList.add("button-delete", "button-control")
-    p.style.outline = "none"
+    li.classList = _todo_class_list ?? "todo"
+    button_check.classList = _button_check_class_list ?? "button-check button-control"
+    button_edit.classList = _button_edit_class_list ?? "button-edit"
+    button_delete.classList = _button_delete_class_list ?? "button-delete button-control"
+    p.classList = _todo_value_class_list ?? "no-outline"
 
     li.appendChild(p)
     li.appendChild(div)
@@ -48,8 +49,9 @@ function useTodo(target) {
 
     function CheckTodo() {
       li.classList.toggle("is-checked")
+      new_todo.is_checked = !new_todo.is_checked
     }
-    
+
     function EditTodo() {
       p.contentEditable = "true"
       li.classList.add("is-editing")
@@ -61,32 +63,18 @@ function useTodo(target) {
       p.contentEditable = "false"
       li.classList.remove("is-editing")
       button_edit.addEventListener("click", () => EditTodo())
-      
-      const todo = FindTodo(id)
-      todo.value = p.innerText
     }
 
     function DeleteTodo() {
-      const todo = FindTodo(id)
-      const index = todos.indexOf(todo)
-      todos.splice(index, 1)
-  
       li.remove()
+      new_todo.delete = !new_todo.delete
     }
-  }
-
-  function GetTodos() {
-    return todos
-  }
-
-  function FindTodo(id) {
-    return todos.find((todo) => todo.id === id)
   }
 
   function CreateButton(text, _url, _alt) {
     let button
     if (text) {
-      document.createElement("button")
+      button = document.createElement("button")
       button.innerText = text
     }
 
@@ -100,7 +88,32 @@ function useTodo(target) {
     return button
   }
 
-  return { CreateTodo, GetTodos, FindTodo }
+  function SaveProgress() {
+    const collection = Array.from(todo_list.children)
+    const new_collection = collection.map(item => ({
+      todo_class_list: item.classList.value,
+      todo_value: item.querySelector("p").innerText,
+      todo_value_class_list: item.querySelector("p").classList.value,
+      button_check_class_list: item.querySelector(".button-check").classList.value,
+      button_edit_class_list: item.querySelector(".button-edit").classList.value,
+      button_delete_class_list: item.querySelector(".button-delete").classList.value,
+    }))
+    const json = JSON.stringify(new_collection)
+    localStorage["todos"] = json
+  }
+
+  function LoadTodos() {
+    const todos = localStorage["todos"]
+    if (todos) {
+      const collection = Array.from(JSON.parse(todos))
+      collection.forEach(todo => {
+        CreateTodo(todo.todo_value, todo.todo_class_list, todo.todo_value_class_list, todo.button_check_class_list, todo.button_edit_class_list, todo.button_delete_class_list)
+      })
+    }
+  }
+
+  return { todos, CreateTodo, LoadTodos }
 }
 
 const todos = useTodo(todo_list)
+todos.LoadTodos()
