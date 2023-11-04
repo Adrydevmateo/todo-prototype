@@ -16,12 +16,6 @@ function useTodo(target) {
   button_save.addEventListener("click", () => SaveProgress())
 
   function CreateTodo(todo, _todo_class_list, _todo_value_class_list, _button_check_class_list, _button_edit_class_list, _button_delete_class_list) {
-    const new_todo = {
-      value: todo,
-      is_checked: false,
-      delete: false,
-    }
-
     const li = document.createElement("li")
     const p = document.createElement("p")
     const div = document.createElement("div")
@@ -49,7 +43,6 @@ function useTodo(target) {
 
     function CheckTodo() {
       li.classList.toggle("is-checked")
-      new_todo.is_checked = !new_todo.is_checked
     }
 
     function EditTodo() {
@@ -67,7 +60,6 @@ function useTodo(target) {
 
     function DeleteTodo() {
       li.remove()
-      new_todo.delete = !new_todo.delete
     }
   }
 
