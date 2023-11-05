@@ -12,7 +12,6 @@ button_submit.addEventListener("click", (event) => {
 })
 
 function useTodo(target) {
-  let todos = []
   button_save.addEventListener("click", () => SaveProgress())
 
   function CreateTodo(todo, _todo_class_list, _todo_value_class_list, _button_check_class_list, _button_edit_class_list, _button_delete_class_list) {
@@ -43,6 +42,7 @@ function useTodo(target) {
 
     function CheckTodo() {
       li.classList.toggle("is-checked")
+      UpdateTodo()
     }
 
     function EditTodo() {
@@ -104,7 +104,7 @@ function useTodo(target) {
     }
   }
 
-  return { todos, CreateTodo, LoadTodos }
+  return { CreateTodo, LoadTodos }
 }
 
 const todos = useTodo(todo_list)
