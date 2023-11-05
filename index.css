@@ -32,6 +32,19 @@ body {
   padding: 0rem 1rem;
 }
 
+header, main {
+  max-width: calc(100% - 50vw);
+  margin: auto;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap-reverse;
+  margin-bottom: 1rem;
+}
+
 ol {
   list-style: none;
   padding: 0;
@@ -49,14 +62,6 @@ form {
 
 form input {
   width: 100%;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap-reverse;
-  margin-bottom: 1rem;
 }
 
 #button-save-progress {
@@ -175,8 +180,8 @@ header {
   }
 }
 
-@media screen and (min-width: 540px) {
-  .todo p {
-    width: 70%;
+@media screen and (min-width: 1224px) {
+  header, main {
+    max-width: calc(100% - 60vw);
   }
 }
