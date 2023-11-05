@@ -32,7 +32,7 @@ function useTodo(target) {
     button_edit.classList = _button_edit_class_list ?? "button-edit"
     button_delete.classList = _button_delete_class_list ?? "button-delete button-control"
     p.classList = _todo_value_class_list ?? "no-outline"
-
+    
     li.appendChild(p)
     li.appendChild(div)
     div.appendChild(button_check)

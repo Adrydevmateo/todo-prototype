@@ -7,6 +7,8 @@
   --tuna: #565f6e;
   --ghost-white: #f6f9ff;
 
+  --background-color-save: var(--primary-green);
+
   --box-shadow-orange: 0rem 0.2rem 1rem 0rem var(--primary-orange);
   --box-shadow-green: 0rem 0.2rem 1rem 0rem var(--primary-green);
   --box-shadow-red: 0rem 0.2rem 1rem 0rem var(--primary-red);
@@ -14,7 +16,7 @@
   --box-shadow-tuna: 0rem 0.2rem 1rem 0rem var(--tuna);
 
   --font-weight-basic: 500;
-  
+
   --text-transform-capitalize: capitalize;
 }
 
@@ -27,6 +29,7 @@ body {
   background-color: var(--ghost-white);
   color: var(--tuna);
   letter-spacing: 0.1rem;
+  padding: 0rem 1rem;
 }
 
 ol {
@@ -38,9 +41,36 @@ ol {
 }
 
 form {
-    display: flex;
-    align-items: center !important;
-    gap: 0.6rem;
+  display: flex;
+  align-items: center !important;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+form input {
+  width: 100%;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap-reverse;
+  margin-bottom: 1rem;
+}
+
+#button-save-progress {
+  border: none;
+  background-color: transparent;
+  border-bottom: 0.2rem solid var(--background-color-save);
+  margin-top: 0.8rem;
+}
+
+#button-save-progress span {
+  display: block;
+  padding-bottom: 0.4rem;
+  font-weight: var(--font-weight-basic);
+  font-size: 1rem;
 }
 
 #input-todo {
@@ -67,12 +97,12 @@ form {
   cursor: pointer;
 }
 
-.is-editing {
-  box-shadow: var(--box-shadow-orange) !important;
-}
-
 .is-checked {
   box-shadow: var(--box-shadow-green) !important;
+}
+
+.is-editing {
+  box-shadow: var(--box-shadow-orange) !important;
 }
 
 .no-outline {
@@ -83,32 +113,33 @@ form {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   padding: 0.1rem 1.2rem 0.2rem 1.4rem;
   cursor: pointer;
   opacity: 0.8;
 }
 
 .todo p {
-  font-weight: var(--font-weight-basic);
   font-size: 1.1rem;
+  word-break: break-all;
+  font-weight: var(--font-weight-basic);
   text-transform: var(--text-transform-capitalize);
-  width: 70%;
-  word-wrap: break-word;
+  width: 100% !important;
 }
 
 .todo div {
-  width: 26%;
   display: flex;
   justify-content: end;
   gap: 1.4rem;
+  width: 100%;
+  padding-bottom: 1rem;
 }
 
 .button-control {
   border-radius: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-}
+@media (prefers-color-scheme: dark) {}
 
 @media (hover: hover) {
   .todo:hover {
@@ -119,7 +150,7 @@ form {
 
   img:hover {
     cursor: pointer;
-    transform: scale(1.2);
+    transform: scale(1.1);
   }
 
   .button-check:hover {
@@ -137,5 +168,15 @@ form {
 
   #submit-button:hover {
     opacity: 0.6;
+  }
+
+  #button-save-progress:hover {
+    transform: scale(1.1);
+  }
+}
+
+@media screen and (min-width: 540px) {
+  .todo p {
+    width: 70%;
   }
 }
