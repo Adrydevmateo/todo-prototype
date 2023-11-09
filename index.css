@@ -13,12 +13,14 @@
   --background-color-notification: var(--ghost-white);
   
   --border-color-inform: var(--primary-blue);
+  --border-color-warning: var(--primary-orange);
   --border-color-error: var(--primary-red);
 
   --font-color-base: var(--tuna);
   --font-color-inform-title: var(--primary-blue);
   --font-color-error-title: var(--primary-red);
   --font-color-notification-msg: var(--tuna);
+  --font-color-dialog-msg: var(--Dark);
 
   --box-shadow-orange: 0rem 0.2rem 1rem 0rem var(--primary-orange);
   --box-shadow-green: 0rem 0.2rem 1rem 0rem var(--primary-green);
@@ -131,6 +133,31 @@ form {
   cursor: pointer;
 }
 
+.button-confirm,
+.button-cancel {
+  border: 0.2rem solid;
+  padding: 1rem;
+  border-radius: 1rem;
+  color: var(--font-color-base);
+  background-color: var(--background-color-base);
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  justify-content: end;
+}
+
+.button-confirm {
+  border-color: var(--primary-green);
+}
+
+.button-cancel {
+  border-color: var(--primary-red);
+}
+
 .is-checked {
   box-shadow: var(--box-shadow-green) !important;
 }
@@ -190,7 +217,7 @@ form {
   opacity: 1;
 }
 
-.notification {
+.notification, .dialog {
   border-radius: 1rem;
   padding-block: 0rem;
   display: flex;
@@ -201,13 +228,27 @@ form {
   background-color: var(--background-color-notification);
 }
 
-.notification .icon-title-box {
+.notification .icon-title-box,
+.dialog .icon-title-box {
   display: flex;
   gap: 0.6rem;
 }
 
+.dialog {
+  flex-direction: column;
+  align-items: start;
+}
+
+.dialog .dialog-title {
+  color: var(--font-color-dialog-msg);
+}
+
 .notification-msg {
   color: var(--font-color-notification-msg);
+}
+
+.warning-dialog {
+  border-color: var(--border-color-warning);
 }
 
 .inform-notification {

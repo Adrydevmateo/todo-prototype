@@ -29,6 +29,85 @@ function ChangeColorTheme() {
   }
 }
 
+function useDialog () {
+
+  function CreateConfirmationDialog(Title, Icon, CSSClass, Msg) {
+    const dialog = document.createElement("dialog")
+    const icon_title_box = document.createElement("div")
+    const title = document.createElement("h3")
+    const message = document.createElement("h3")
+    const icon = document.createElement("img")
+    const btn_group = document.createElement("div")
+    const btn_confirm = document.createElement("button")
+    const btn_cancel = document.createElement("button")
+
+    dialog.classList.add(CSSClass, "dialog")
+    icon_title_box.classList.add("icon-title-box")
+    title.classList.add("dialog-title")
+    message.classList.add("dialog-msg")
+    btn_group.classList.add("button-group")
+    btn_confirm.classList.add("button", "button-confirm")
+    btn_cancel.classList.add("button", "button-cancel")
+
+    btn_confirm.type = "button"
+    btn_cancel.type = "button"
+
+    title.innerText = `${Title}:`
+    message.innerText = Msg
+    icon.src = `/${Icon}`
+    btn_confirm.innerText = "Confirm"
+    btn_cancel.innerText = "Cancel"
+
+    icon_title_box.appendChild(icon)
+    icon_title_box.appendChild(title)
+
+    btn_group.appendChild(btn_cancel)
+    btn_group.appendChild(btn_confirm)
+    
+    dialog.appendChild(icon_title_box)
+    dialog.appendChild(message)
+    dialog.appendChild(btn_group)
+    
+    document.body.appendChild(dialog)
+
+    btn_confirm.addEventListener("click", () => dialog.remove())
+    btn_cancel.addEventListener("click", () => dialog.remove())
+
+    return { btn_confirm, btn_cancel }
+  }
+
+  function CreateNotificationWithIcon(Title, Icon, CSSClass, _Msg) {
+    const notification = document.createElement("dialog")
+    const icon_title_box = document.createElement("div")
+    const title = document.createElement("h3")
+    const message = document.createElement("h3")
+    const icon = document.createElement("img")
+
+    notification.classList.add(CSSClass, "notification")
+    icon_title_box.classList.add("icon-title-box")
+    title.classList.add("notification-title")
+    message.classList.add("notification-msg")
+
+    title.innerText = `${Title}${(_Msg) ? ':' : ''}`
+    message.innerText = _Msg
+    icon.src = `/${Icon}`
+
+    icon_title_box.appendChild(icon)
+    icon_title_box.appendChild(title)
+    notification.appendChild(icon_title_box)
+
+    if (_Msg) notification.appendChild(message)
+
+    document.body.appendChild(notification)
+
+    setTimeout(() => notification.remove(), 4000)
+  }
+
+  return { CreateConfirmationDialog, CreateNotificationWithIcon }
+}
+
+const dialogs = useDialog()
+
 function useTodo(target) {
   const current_todos = []
   button_save.addEventListener("click", () => SaveProgress())
@@ -94,7 +173,11 @@ function useTodo(target) {
       }
 
       function DeleteTodo() {
-        li.remove()
+        const { btn_confirm }  = dialogs.CreateConfirmationDialog("Deleting To Do", "ZondiconsInformationOutlineWarning.svg", "warning-dialog", p.innerText)
+        btn_confirm.addEventListener("click", () => {
+          li.remove()
+          // TODO: Add pop up
+        })
       }
     }
   }
@@ -145,37 +228,3 @@ function useTodo(target) {
 
 const todos = useTodo(todo_list)
 todos.LoadTodos()
-
-function useDialog () {
-
-  function CreateNotificationWithIcon(Title, Icon, CSSClass, _Msg) {
-    const notification = document.createElement("dialog")
-    const icon_title_box = document.createElement("div")
-    const title = document.createElement("h3")
-    const message = document.createElement("h3")
-    const icon = document.createElement("img")
-
-    notification.classList.add(CSSClass, "notification")
-    icon_title_box.classList.add("icon-title-box")
-    title.classList.add("notification-title")
-    message.classList.add("notification-msg")
-
-    title.innerText = `${Title}${(_Msg) ? ':' : ''}`
-    message.innerText = _Msg
-    icon.src = `/${Icon}`
-
-    icon_title_box.appendChild(icon)
-    icon_title_box.appendChild(title)
-    notification.appendChild(icon_title_box)
-
-    if (_Msg) notification.appendChild(message)
-
-    document.body.appendChild(notification)
-
-    setTimeout(() => notification.remove(), 4000)
-  }
-
-  return { CreateNotificationWithIcon }
-}
-
-const dialogs = useDialog()
