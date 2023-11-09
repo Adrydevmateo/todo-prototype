@@ -10,10 +10,14 @@ button_submit.addEventListener("click", (event) => {
   event.preventDefault()
   if (input.value) {
     todos.CreateTodo(input.value)
+  } else {
+    dialogs.CreateNotificationWithIcon("Please add a new to do", "ZondiconsInformationOutlineInform.svg", "inform-notification")
   }
 })
 
 button_change_color_theme.addEventListener("click", () => ChangeColorTheme())
+
+const CapitalizeText = (txt) => txt.replace(/\b\w/g, (letter) => letter.toUpperCase())
 
 function ChangeColorTheme() {
   document.body.classList.toggle("dark-theme")
@@ -31,7 +35,7 @@ function useTodo(target) {
 
   function CreateTodo(todo, _todo_class_list, _todo_value_class_list, _button_check_class_list, _button_edit_class_list, _button_delete_class_list) {
     if (current_todos.includes(CapitalizeText(todo))) {
-      dialogs.CreateNotificationWithIcon("Error", "this to do already exist", "ZondiconsInformationOutlineError.svg", "error-notification")
+      dialogs.CreateNotificationWithIcon("Error", "ZondiconsInformationOutlineError.svg", "error-notification", "this to do already exist")
     } else {
       current_todos.push(todo)
 
@@ -143,26 +147,29 @@ const todos = useTodo(todo_list)
 todos.LoadTodos()
 
 function useDialog () {
-  function CreateNotificationWithIcon(Title, Msg, Icon, CSSClass) {
+
+  function CreateNotificationWithIcon(Title, Icon, CSSClass, _Msg) {
     const notification = document.createElement("dialog")
     const icon_title_box = document.createElement("div")
     const title = document.createElement("h3")
     const message = document.createElement("h3")
     const icon = document.createElement("img")
 
-    notification.classList.add(CSSClass)
+    notification.classList.add(CSSClass, "notification")
     icon_title_box.classList.add("icon-title-box")
     title.classList.add("notification-title")
     message.classList.add("notification-msg")
 
-    title.innerText = `${Title}:`
-    message.innerText = Msg
+    title.innerText = `${Title}${(_Msg) ? ':' : ''}`
+    message.innerText = _Msg
     icon.src = `/${Icon}`
 
     icon_title_box.appendChild(icon)
     icon_title_box.appendChild(title)
     notification.appendChild(icon_title_box)
-    notification.appendChild(message)
+
+    if (_Msg) notification.appendChild(message)
+
     document.body.appendChild(notification)
 
     setTimeout(() => notification.remove(), 4000)
@@ -172,5 +179,3 @@ function useDialog () {
 }
 
 const dialogs = useDialog()
-
-const CapitalizeText = (txt) => txt.replace(/\b\w/g, (letter) => letter.toUpperCase())

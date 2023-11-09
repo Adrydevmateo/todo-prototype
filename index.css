@@ -10,13 +10,15 @@
 
   --background-color-save: var(--primary-green);
   --background-color-base: var(--ghost-white);
-  --background-color-error: var(--ghost-white);
+  --background-color-notification: var(--ghost-white);
   
+  --border-color-inform: var(--primary-blue);
   --border-color-error: var(--primary-red);
 
   --font-color-base: var(--tuna);
+  --font-color-inform-title: var(--primary-blue);
   --font-color-error-title: var(--primary-red);
-  --font-color-error-msg: var(--tuna);
+  --font-color-notification-msg: var(--tuna);
 
   --box-shadow-orange: 0rem 0.2rem 1rem 0rem var(--primary-orange);
   --box-shadow-green: 0rem 0.2rem 1rem 0rem var(--primary-green);
@@ -175,8 +177,8 @@ form {
 .dark-theme {
   --background-color-base: var(--dark);
   --font-color-base: var(--ghost-white);
-  --background-color-error: var(--dark);
-  --font-color-error-msg: var(--ghost-white);
+  --background-color-notification: var(--dark);
+  --font-color-notification-msg: var(--ghost-white);
 }
 
 .dark-theme #input-todo {
@@ -188,9 +190,7 @@ form {
   opacity: 1;
 }
 
-.error-notification {
-  border-color: var(--border-color-error);
-  background-color: var(--background-color-error);
+.notification {
   border-radius: 1rem;
   padding-block: 0rem;
   display: flex;
@@ -198,19 +198,32 @@ form {
   gap: 0.4rem;
   position: absolute;
   top: 1.6rem;
+  background-color: var(--background-color-notification);
 }
 
-.error-notification .icon-title-box {
+.notification .icon-title-box {
   display: flex;
   gap: 0.6rem;
 }
 
-.error-notification .notification-title {
-  color: var(--font-color-error-title);
+.notification-msg {
+  color: var(--font-color-notification-msg);
 }
 
-.error-notification .notification-msg {
-  color: var(--font-color-error-msg);
+.inform-notification {
+  border-color: var(--border-color-inform);
+}
+
+.inform-notification .notification-title {
+  color: var(--font-color-inform-title);
+}
+
+.error-notification {
+  border-color: var(--border-color-error);
+}
+
+.error-notification .notification-title {
+  color: var(--font-color-error-title);
 }
 
 @media (hover: hover) {
@@ -218,6 +231,11 @@ form {
     box-shadow: var(--box-shadow-tuna);
     transform: scale(1.001);
     opacity: 1;
+  }
+
+  .notification img:hover {
+    cursor: unset;
+    transform: scale(1);
   }
 
   img:hover {
