@@ -8,10 +8,8 @@ const img_change_color_theme = document.querySelector("[data-image='change-color
 
 button_submit.addEventListener("click", (event) => {
   event.preventDefault()
-  // TODO: Add pop up
   if (input.value) {
     todos.CreateTodo(input.value)
-    input.value = ""
   }
 })
 
@@ -32,8 +30,8 @@ function useTodo(target) {
   button_save.addEventListener("click", () => SaveProgress())
 
   function CreateTodo(todo, _todo_class_list, _todo_value_class_list, _button_check_class_list, _button_edit_class_list, _button_delete_class_list) {
-    if (current_todos.includes(todo)) {
-      dialogs.CreateNotificationWithIcon("Error", "this task already exist", "ZondiconsInformationOutlineError.svg", "error-notification")
+    if (current_todos.includes(CapitalizeText(todo))) {
+      dialogs.CreateNotificationWithIcon("Error", "this to do already exist", "ZondiconsInformationOutlineError.svg", "error-notification")
     } else {
       current_todos.push(todo)
 
@@ -69,6 +67,8 @@ function useTodo(target) {
       div.appendChild(button_edit)
       div.appendChild(button_delete)
       target.appendChild(li)
+
+      input.value = ""
 
       function CheckTodo() {
         li.classList.toggle("is-checked")
@@ -172,3 +172,5 @@ function useDialog () {
 }
 
 const dialogs = useDialog()
+
+const CapitalizeText = (txt) => txt.replace(/\b\w/g, (letter) => letter.toUpperCase())
