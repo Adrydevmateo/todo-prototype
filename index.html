@@ -5,21 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="AdryDev" />
     <title>TO-Do Application</title>
-    <link rel="stylesheet" href="index.css" />
-    <script src="index.js" defer></script>
+    <link rel="stylesheet" href="/index.css" />
+    <script src="/index.js" defer></script>
   </head>
   <body>
     <header>
       <h1>TO-DO Application</h1>
-      <button id="button-save-progress" class="button" data-button="save-progress">
-        <span>Save Progress</span>
-      </button>
+      <div id="page-controls">
+        <button id="button-save-progress" class="button" data-button="save-progress" type="button">
+          <span>Save Progress</span>
+        </button>
+        <button id="button-change-color-theme" data-button="change-color-theme" type="button">
+          <img src="/SolarMoonBold.svg" alt="Change color theme button" data-image="change-color-theme">
+        </button>
+      </div>
     </header>
     <main>
       <form data-form="todo">
-        <input type="text" name="todo" id="input-todo" data-input="todo" />
+        <input type="text" name="todo" id="input-todo" data-input="todo" spellcheck="true" />
         <button id="submit-button" data-button="submit" type="submit">
-          <img src="ZondiconsAddOutline.svg" alt="Add todo button" />
+          <img src="/ZondiconsAddOutline.svg" alt="Add todo button" />
         </button>
       </form>
 

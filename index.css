@@ -5,9 +5,18 @@
   --primary-green: #91dfcd;
   --primary-blue: #00c3ff;
   --tuna: #565f6e;
+  --dark: #19222F;
   --ghost-white: #f6f9ff;
 
   --background-color-save: var(--primary-green);
+  --background-color-base: var(--ghost-white);
+  --background-color-error: var(--ghost-white);
+  
+  --border-color-error: var(--primary-red);
+
+  --font-color-base: var(--tuna);
+  --font-color-error-title: var(--primary-red);
+  --font-color-error-msg: var(--tuna);
 
   --box-shadow-orange: 0rem 0.2rem 1rem 0rem var(--primary-orange);
   --box-shadow-green: 0rem 0.2rem 1rem 0rem var(--primary-green);
@@ -26,14 +35,14 @@ html {
 }
 
 body {
-  background-color: var(--ghost-white);
-  color: var(--tuna);
+  background-color: var(--background-color-base);
+  color: var(--font-color-base);
   letter-spacing: 0.1rem;
   padding: 0rem 1rem;
 }
 
-header, main {
-  max-width: calc(100% - 50vw);
+header,
+main {
   margin: auto;
 }
 
@@ -45,12 +54,18 @@ header {
   margin-bottom: 1rem;
 }
 
+header #page-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 ol {
   list-style: none;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 form {
@@ -60,15 +75,12 @@ form {
   gap: 0.6rem;
 }
 
-form input {
-  width: 100%;
-}
-
 #button-save-progress {
   border: none;
   background-color: transparent;
   border-bottom: 0.2rem solid var(--background-color-save);
   margin-top: 0.8rem;
+  color: var(--font-color-base);
 }
 
 #button-save-progress span {
@@ -79,6 +91,7 @@ form input {
 }
 
 #input-todo {
+  width: 100%;
   border: none;
   box-shadow: var(--box-shadow-tuna);
   font-weight: var(--font-weight-basic);
@@ -86,6 +99,20 @@ form input {
   outline: none;
   padding: 0.7rem;
   text-transform: var(--text-transform-capitalize);
+  border-radius: 1rem;
+}
+
+#button-change-color-theme {
+  border: none;
+  border-radius: 100%;
+  padding: 0;
+  display: flex;
+  background-color: transparent;
+  padding-top: 0.6rem;
+}
+
+#button-change-color-theme img {
+  transform: scale(1.02);
 }
 
 #submit-button {
@@ -122,6 +149,7 @@ form input {
   padding: 0.1rem 1.2rem 0.2rem 1.4rem;
   cursor: pointer;
   opacity: 0.8;
+  border-radius: 1rem;
 }
 
 .todo p {
@@ -144,7 +172,46 @@ form input {
   border-radius: 100%;
 }
 
-@media (prefers-color-scheme: dark) {}
+.dark-theme {
+  --background-color-base: var(--dark);
+  --font-color-base: var(--ghost-white);
+  --background-color-error: var(--dark);
+  --font-color-error-msg: var(--ghost-white);
+}
+
+.dark-theme #input-todo {
+  opacity: 0.9;
+  color: var(--tuna);
+}
+
+.dark-theme #input-todo:hover {
+  opacity: 1;
+}
+
+.error-notification {
+  border-color: var(--border-color-error);
+  background-color: var(--background-color-error);
+  border-radius: 1rem;
+  padding-block: 0rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  position: absolute;
+  top: 1.6rem;
+}
+
+.error-notification .icon-title-box {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.error-notification .notification-title {
+  color: var(--font-color-error-title);
+}
+
+.error-notification .notification-msg {
+  color: var(--font-color-error-msg);
+}
 
 @media (hover: hover) {
   .todo:hover {
@@ -178,10 +245,28 @@ form input {
   #button-save-progress:hover {
     transform: scale(1.1);
   }
+
+  #button-change-color-theme img:hover {
+    transform: scale(1.12);
+  }
+}
+
+@media screen and (max-width: 346px) {
+  .error-notification {
+    flex-direction: column;
+    align-items: start;
+    gap: 0;
+  }
+
+  .error-notification .notification-msg {
+    margin-top: 0.2rem;
+  }
 }
 
 @media screen and (min-width: 1224px) {
-  header, main {
+
+  header,
+  main {
     max-width: calc(100% - 60vw);
   }
 }
