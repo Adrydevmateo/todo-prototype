@@ -123,10 +123,8 @@ function useTodo(target) {
       const button_delete = CreateButton("", "/ZondiconsCloseOutline.svg", "Delete todo button")
 
       p.innerText = todo
-      button_check.addEventListener("click", () => CheckTodo())
-      button_edit.addEventListener("click", () => EditTodo())
-      button_delete.addEventListener("click", () => DeleteTodo())
 
+      li.id = crypto.randomUUID()
       li.classList = _todo_class_list ?? "todo"
       button_check.classList = _button_check_class_list ?? "button-check button-control"
       button_edit.classList = _button_edit_class_list ?? "button-edit"
@@ -141,12 +139,16 @@ function useTodo(target) {
       button_edit.type = "button"
       button_delete.type = "button"
 
+      button_check.addEventListener("click", () => CheckTodo())
+      button_edit.addEventListener("click", () => EditTodo())
+      button_delete.addEventListener("click", () => DeleteTodo())
+
       li.appendChild(p)
       li.appendChild(div)
       div.appendChild(button_check)
       div.appendChild(button_edit)
       div.appendChild(button_delete)
-      target.appendChild(li)
+      target.prepend(li)
 
       input.value = ""
 
