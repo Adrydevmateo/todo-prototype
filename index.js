@@ -11,7 +11,7 @@ button_submit.addEventListener("click", (event) => {
   if (input.value) {
     todos.CreateTodo(input.value)
   } else {
-    dialogs.CreateNotificationWithIcon("Please add a new to do", "ZondiconsInformationOutlineInform.svg", "inform-notification")
+    dialogs.CreateNotificationWithIcon("Add a new to do", "ZondiconsInformationOutlineInform.svg", "inform-notification")
   }
 })
 
@@ -83,7 +83,7 @@ function useDialog() {
     const message = document.createElement("h3")
     const icon = document.createElement("img")
 
-    notification.classList.add(CSSClass, "notification")
+    notification.classList.add(CSSClass, "notification", "slide-from-top")
     icon_title_box.classList.add("icon-title-box")
     title.classList.add("notification-title")
     message.classList.add("notification-msg")
@@ -125,7 +125,7 @@ function useTodo(target) {
       p.innerText = todo
 
       li.id = crypto.randomUUID()
-      li.classList = _todo_class_list ?? "todo"
+      li.classList = _todo_class_list ?? "todo fade-in"
       button_check.classList = _button_check_class_list ?? "button-check button-control"
       button_edit.classList = _button_edit_class_list ?? "button-edit"
       button_delete.classList = _button_delete_class_list ?? "button-delete button-control"
@@ -148,7 +148,7 @@ function useTodo(target) {
       div.appendChild(button_check)
       div.appendChild(button_edit)
       div.appendChild(button_delete)
-      target.prepend(li)
+      target.appendChild(li)
 
       input.value = ""
 
@@ -209,6 +209,7 @@ function useTodo(target) {
     }))
     const json = JSON.stringify(new_collection)
     localStorage["todos"] = json
+    dialogs.CreateNotificationWithIcon("Progress saved successfully", "ZondiconsInformationOutlineSuccess.svg", "success-notification")
   }
 
   function LoadTodos() {

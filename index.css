@@ -11,12 +11,14 @@
   --background-color-save: var(--primary-green);
   --background-color-base: var(--ghost-white);
   --background-color-notification: var(--ghost-white);
-  
+
+  --border-color-success: var(--primary-green);
   --border-color-inform: var(--primary-blue);
   --border-color-warning: var(--primary-orange);
   --border-color-error: var(--primary-red);
 
   --font-color-base: var(--tuna);
+  --font-color-success-title: var(--primary-green);
   --font-color-inform-title: var(--primary-blue);
   --font-color-error-title: var(--primary-red);
   --font-color-notification-msg: var(--tuna);
@@ -29,6 +31,10 @@
   --box-shadow-tuna: 0rem 0.2rem 1rem 0rem var(--tuna);
 
   --font-weight-basic: 500;
+
+  --animation-duration: 4s;
+  --animation-slide-from-top-initial-from: -6rem;
+  --animation-slide-from-top-initial-to: 2rem;
 
   --text-transform-capitalize: capitalize;
 }
@@ -70,6 +76,7 @@ ol {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  margin-top: 2rem;
 }
 
 form {
@@ -217,7 +224,8 @@ form {
   opacity: 1;
 }
 
-.notification, .dialog {
+.notification,
+.dialog {
   border-radius: 1rem;
   padding-block: 0rem;
   display: flex;
@@ -226,6 +234,16 @@ form {
   position: absolute;
   top: 1.6rem;
   background-color: var(--background-color-notification);
+}
+
+.slide-from-top {
+  animation-name: slide-from-top;
+  animation-duration: var(--animation-duration);
+}
+
+.fade-in {
+  animation-name: fade-in;
+  animation-duration: var(--animation-duration);
 }
 
 .notification .icon-title-box,
@@ -249,6 +267,14 @@ form {
 
 .warning-dialog {
   border-color: var(--border-color-warning);
+}
+
+.success-notification {
+  border-color: var(--border-color-success);
+}
+
+.success-notification .notification-title {
+  color: var(--font-color-success-title);
 }
 
 .inform-notification {
@@ -327,5 +353,37 @@ form {
   header,
   main {
     max-width: calc(100% - 60vw);
+  }
+}
+
+@keyframes slide-from-top {
+  0% {
+    top: var(--animation-slide-from-top-initial-from);
+  }
+
+  25% {
+    top: var(--animation-slide-from-top-initial-to);
+  }
+
+  50% {
+    top: var(--animation-slide-from-top-initial-to);
+  }
+
+  75% {
+    top: var(--animation-slide-from-top-initial-to);
+  }
+
+  100% {
+    top: var(--animation-slide-from-top-initial-from);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.8;
   }
 }
