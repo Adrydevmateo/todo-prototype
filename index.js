@@ -29,7 +29,7 @@ function ChangeColorTheme() {
   }
 }
 
-function useDialog () {
+function useDialog() {
 
   function CreateConfirmationDialog(Title, Icon, CSSClass, Msg) {
     const dialog = document.createElement("dialog")
@@ -63,11 +63,11 @@ function useDialog () {
 
     btn_group.appendChild(btn_cancel)
     btn_group.appendChild(btn_confirm)
-    
+
     dialog.appendChild(icon_title_box)
     dialog.appendChild(message)
     dialog.appendChild(btn_group)
-    
+
     document.body.appendChild(dialog)
 
     btn_confirm.addEventListener("click", () => dialog.remove())
@@ -109,15 +109,12 @@ function useDialog () {
 const dialogs = useDialog()
 
 function useTodo(target) {
-  const current_todos = []
   button_save.addEventListener("click", () => SaveProgress())
 
   function CreateTodo(todo, _todo_class_list, _todo_value_class_list, _button_check_class_list, _button_edit_class_list, _button_delete_class_list) {
-    if (current_todos.includes(CapitalizeText(todo))) {
+    if (CheckIfTodoExist(todo)) {
       dialogs.CreateNotificationWithIcon("Error", "ZondiconsInformationOutlineError.svg", "error-notification", "this to do already exist")
     } else {
-      current_todos.push(todo)
-
       const li = document.createElement("li")
       const p = document.createElement("p")
       const div = document.createElement("div")
@@ -173,10 +170,9 @@ function useTodo(target) {
       }
 
       function DeleteTodo() {
-        const { btn_confirm }  = dialogs.CreateConfirmationDialog("Deleting To Do", "ZondiconsInformationOutlineWarning.svg", "warning-dialog", p.innerText)
+        const { btn_confirm } = dialogs.CreateConfirmationDialog("Deleting To Do", "ZondiconsInformationOutlineWarning.svg", "warning-dialog", p.innerText)
         btn_confirm.addEventListener("click", () => {
           li.remove()
-          // TODO: Add pop up
         })
       }
     }
@@ -223,7 +219,18 @@ function useTodo(target) {
     }
   }
 
-  return { CreateTodo, LoadTodos, current_todos }
+  function CheckIfTodoExist(todo) {
+    const collection = Array.from(todo_list.children)
+    for (let index = 0; index < collection.length; index++) {
+      let element = collection[index].querySelector("p").innerText
+      if (todo[0] == " ") todo = todo.substr(1)
+      if (todo[todo.length - 1] == " ") todo = todo.substr(0, todo.length - 1)
+      if (element.toLowerCase() == todo.toLowerCase()) return 1
+    }
+    return 0
+  }
+
+  return { CreateTodo, LoadTodos, CheckIfTodoExist }
 }
 
 const todos = useTodo(todo_list)
