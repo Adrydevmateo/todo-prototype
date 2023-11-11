@@ -6,7 +6,7 @@
   --primary-blue: #00c3ff;
   --tuna: #565f6e;
   --tuna-muted: hsla(218, 12%, 38%, 0.6);
-  --dark: #19222F;
+  --dark: #19222f;
   --ghost-white: #f6f9ff;
 
   --background-color-save: var(--primary-green);
@@ -43,8 +43,7 @@
 }
 
 html {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 body {
@@ -73,6 +72,13 @@ header #page-controls {
   gap: 1rem;
 }
 
+form {
+  display: flex;
+  align-items: center !important;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
 ol {
   list-style: none;
   padding: 0;
@@ -82,13 +88,7 @@ ol {
   margin-top: 2rem;
 }
 
-form {
-  display: flex;
-  align-items: center !important;
-  justify-content: space-between;
-  gap: 0.6rem;
-}
-
+/* Id selector start */
 #button-save-progress {
   border: none;
   background-color: transparent;
@@ -104,18 +104,6 @@ form {
   font-size: 1rem;
 }
 
-#input-todo {
-  width: 100%;
-  border: none;
-  box-shadow: var(--box-shadow-tuna);
-  font-weight: var(--font-weight-basic);
-  opacity: 0.4;
-  outline: none;
-  padding: 0.7rem;
-  text-transform: var(--text-transform-capitalize);
-  border-radius: 1rem;
-}
-
 #button-change-color-theme {
   border: none;
   border-radius: 100%;
@@ -129,6 +117,18 @@ form {
   transform: scale(1.02);
 }
 
+#input-todo {
+  width: 100%;
+  border: none;
+  box-shadow: var(--box-shadow-tuna);
+  font-weight: var(--font-weight-basic);
+  opacity: 0.4;
+  outline: none;
+  padding: 0.7rem;
+  text-transform: var(--text-transform-capitalize);
+  border-radius: 1rem;
+}
+
 #submit-button {
   padding: 0;
   border-radius: 100%;
@@ -138,37 +138,39 @@ form {
   box-shadow: var(--box-shadow-tuna);
   opacity: 0.8;
 }
+/* Id selector end */
+
+/* Class selector start */
+.dark-theme {
+  --background-color-base: var(--dark);
+  --font-color-base: var(--ghost-white);
+  --background-color-notification: var(--dark);
+  --font-color-notification-msg: var(--ghost-white);
+}
+
+.dark-theme #input-todo {
+  opacity: 0.9;
+  color: var(--tuna);
+}
+
+.dark-theme #input-todo:hover {
+  opacity: 1;
+}
+
+/* Animation start */
+.slide-from-top {
+  animation-name: slide-from-top;
+  animation-duration: var(--animation-duration);
+}
+
+.fade-in {
+  animation-name: fade-in;
+  animation-duration: var(--animation-duration);
+}
+/* Animation end */
 
 .button {
   cursor: pointer;
-}
-
-.button-confirm,
-.button-cancel {
-  border: 0.2rem solid;
-  padding: 1rem;
-  border-radius: 1rem;
-  color: var(--font-color-base);
-  background-color: var(--background-color-base);
-  width: 100%;
-}
-
-.button-group {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  width: 100%;
-  justify-content: space-between;
-}
-
-.button-confirm {
-  border-color: var(--border-color-black-muted);
-  font-weight: bold;
-}
-
-.button-cancel {
-  border-color: var(--primary-red);
-  font-weight: bold;
 }
 
 .is-checked {
@@ -189,7 +191,6 @@ form {
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 0.1rem 1.2rem 0.2rem 1.4rem;
-  cursor: pointer;
   opacity: 0.8;
   border-radius: 1rem;
 }
@@ -210,24 +211,36 @@ form {
   padding-bottom: 1rem;
 }
 
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  justify-content: space-between;
+}
+
 .button-control {
   border-radius: 100%;
 }
 
-.dark-theme {
-  --background-color-base: var(--dark);
-  --font-color-base: var(--ghost-white);
-  --background-color-notification: var(--dark);
-  --font-color-notification-msg: var(--ghost-white);
+.button-confirm,
+.button-cancel {
+  border: 0.2rem solid;
+  padding: 1rem;
+  border-radius: 1rem;
+  color: var(--font-color-base);
+  background-color: var(--background-color-base);
+  width: 100%;
 }
 
-.dark-theme #input-todo {
-  opacity: 0.9;
-  color: var(--tuna);
+.button-confirm {
+  border-color: var(--border-color-black-muted);
+  font-weight: bold;
 }
 
-.dark-theme #input-todo:hover {
-  opacity: 1;
+.button-cancel {
+  border-color: var(--primary-red);
+  font-weight: bold;
 }
 
 .notification,
@@ -240,16 +253,6 @@ form {
   position: absolute;
   top: 1.6rem;
   background-color: var(--background-color-notification);
-}
-
-.slide-from-top {
-  animation-name: slide-from-top;
-  animation-duration: var(--animation-duration);
-}
-
-.fade-in {
-  animation-name: fade-in;
-  animation-duration: var(--animation-duration);
 }
 
 .notification .icon-title-box,
@@ -271,12 +274,12 @@ form {
   color: var(--font-color-dialog-msg);
 }
 
-.notification-msg {
-  color: var(--font-color-notification-msg);
-}
-
 .warning-dialog {
   border-color: var(--border-color-dialog-delete);
+}
+
+.notification-msg {
+  color: var(--font-color-notification-msg);
 }
 
 .success-notification {
@@ -302,49 +305,16 @@ form {
 .error-notification .notification-title {
   color: var(--font-color-error-title);
 }
+/* Class selector end */
 
 @media (hover: hover) {
-  .todo:hover {
-    box-shadow: var(--box-shadow-tuna);
-    transform: scale(1.001);
-    opacity: 1;
-  }
-
-  .notification img:hover {
-    cursor: unset;
-    transform: scale(1);
-  }
-
-  .dialog img:hover {
-    transform: unset;
-    cursor: unset;
-  }
-
-  img:hover {
-    cursor: pointer;
-    transform: scale(1.1);
-  }
-
-  .button-check:hover {
-    box-shadow: var(--box-shadow-green);
-    background-color: transparent;
-  }
-
-  .button-delete:hover {
-    box-shadow: var(--box-shadow-red);
-  }
-
-  .button-confirm:hover,
-  .button-cancel:hover {
-    transform: scale(1.1);
-  }
-
   #input-todo:hover {
     opacity: 0.8;
   }
 
   #submit-button:hover {
     opacity: 0.6;
+    cursor: pointer;
   }
 
   #button-save-progress:hover {
@@ -353,6 +323,37 @@ form {
 
   #button-change-color-theme img:hover {
     transform: scale(1.12);
+    cursor: pointer;
+  }
+
+  .todo:hover {
+    box-shadow: var(--box-shadow-tuna);
+    transform: scale(1.001);
+    opacity: 1;
+  }
+
+  .button-check:hover {
+    box-shadow: var(--box-shadow-green);
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  .button-edit:hover {
+    cursor: pointer;
+  }
+
+  .button-delete:hover {
+    box-shadow: var(--box-shadow-red);
+    cursor: pointer;
+  }
+
+  .button-confirm:hover,
+  .button-cancel:hover {
+    transform: scale(1.1);
+  }
+
+  .notification img:hover {
+    transform: scale(1);
   }
 }
 
@@ -369,7 +370,6 @@ form {
 }
 
 @media screen and (min-width: 1224px) {
-
   header,
   main {
     max-width: calc(100% - 60vw);
