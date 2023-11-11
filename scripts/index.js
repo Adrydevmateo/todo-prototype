@@ -1,5 +1,4 @@
 'use strict'
-
 const header = document.querySelector('header')
 const todo_list = document.querySelector("[data-list='todos']")
 const input = document.querySelector("[data-input='todo']")
