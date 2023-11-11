@@ -6,12 +6,30 @@ const btn_save = document.querySelector("[data-btn='save-progress']")
 const btn_submit = document.querySelector("[data-btn='submit']")
 const btn_change_color_theme = document.querySelector("[data-btn='change-color-theme']")
 const img_change_color_theme = document.querySelector("[data-image='change-color-theme']")
+const is_dark_mode_active = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+const current_color_theme = localStorage['color-theme']
 
 const utils = {
   ChangeColorTheme() {
-    document.body.classList.toggle('dark-theme')
-    if (img_change_color_theme.src.includes('/icons/SolarMoonBold.svg')) img_change_color_theme.src = '/icons/SolarSunBold.svg'
-    else img_change_color_theme.src = '/icons/SolarMoonBold.svg'
+    if (this.CheckIfColorThemeIsBlack()) {
+      this.SetWhiteTheme()
+    } else {
+      this.SetDarkTheme()
+    }
+  },
+  SetDarkTheme() {
+    document.body.classList.add('dark-theme')
+    img_change_color_theme.src = '/icons/SolarSunBold.svg'
+    localStorage['color-theme'] = 'dark-theme'
+  },
+  SetWhiteTheme() {
+    document.body.classList.remove('dark-theme')
+    img_change_color_theme.src = '/icons/SolarMoonBold.svg'
+    localStorage['color-theme'] = ''
+  },
+  CheckIfColorThemeIsBlack() {
+    const color_theme = localStorage['color-theme']
+    return color_theme == 'dark-theme' ? true : false
   },
   DeleteDOMElement: (element) => element.remove(),
   CreateBtn() {
@@ -35,9 +53,9 @@ const utils = {
 }
 
 const popups = {
-  CreateConfirmationDialog(new_title, new_icon, css_classes, new_msg) {
+  CreateConfirmationDialog(new_title, new_icon, icon_alt, css_classes, new_msg) {
     const dialog = document.createElement('dialog')
-    const icon_title_box = document.createElement('div')
+    const title_box = document.createElement('div')
     const title = document.createElement('h3')
     const msg = document.createElement('h3')
     const icon = document.createElement('img')
@@ -46,24 +64,29 @@ const popups = {
     const btn_cancel = utils.CreateTextBtn('Cancel')
 
     dialog.classList.add(css_classes, 'dialog', 'fade-in')
-    icon_title_box.classList.add('icon-title-box')
+
+    title_box.classList.add('icon-title-box')
     title.classList.add('dialog-title')
+
     msg.classList.add('dialog-msg')
+
     btn_group.classList.add('btn-group')
     btn_confirm.classList.add('btn', 'btn-confirm')
     btn_cancel.classList.add('btn', 'btn-cancel')
 
     title.innerText = `${new_title}:`
     msg.innerText = new_msg
-    icon.src = new_icon[0] == '/' ? new_icon : `/${new_icon}`
 
-    icon_title_box.appendChild(icon)
-    icon_title_box.appendChild(title)
+    icon.src = new_icon[0] == '/' ? new_icon : `/${new_icon}`
+    icon.alt = icon_alt
+
+    title_box.appendChild(icon)
+    title_box.appendChild(title)
 
     btn_group.appendChild(btn_cancel)
     btn_group.appendChild(btn_confirm)
 
-    dialog.appendChild(icon_title_box)
+    dialog.appendChild(title_box)
     dialog.appendChild(msg)
     dialog.appendChild(btn_group)
 
@@ -74,24 +97,33 @@ const popups = {
 
     return { btn_confirm, btn_cancel }
   },
-  CreateNotificationWithIcon(new_title, new_icon, css_classes) {
+
+  // TODO: Add an alt to the icon
+  /** Creates a notification pop up with an icon included
+   * @param {String} new_msg - message to be shown in the pop up
+   * @param {String} new_icon - url of the icon
+   * @param {String} css_classes - css classes for the pop up
+   */
+  CreateNotificationWithIcon(new_msg, new_icon, icon_alt, css_classes) {
     const notification = document.createElement('dialog')
-    const icon_title_box = document.createElement('div')
-    const title = document.createElement('h3')
+    const title_box = document.createElement('div')
+    const msg = document.createElement('h3')
     const icon = document.createElement('img')
 
     notification.classList.add(css_classes, 'notification', 'slide-from-top')
-    icon_title_box.classList.add('icon-title-box')
-    title.classList.add('notification-title')
+    title_box.classList.add('icon-title-box')
+    msg.classList.add('notification-title')
 
-    title.innerText = new_title
+    msg.innerText = new_msg
+
     icon.src = new_icon[0] == '/' ? new_icon : `/${new_icon}`
+    icon.alt = icon_alt
 
-    icon_title_box.appendChild(icon)
-    icon_title_box.appendChild(title)
+    title_box.appendChild(icon)
+    title_box.appendChild(msg)
 
-    notification.appendChild(icon_title_box)
-    notification.appendChild(title)
+    notification.appendChild(title_box)
+    notification.appendChild(msg)
 
     document.body.appendChild(notification)
 
@@ -128,7 +160,7 @@ function useTodo({ target, utils, popups }) {
    * @since 1.0.0
    */
   function AddTodo({ value, class_list, value_class_list, btn_check_class_list, btn_edit_class_list, btn_delete_class_list }) {
-    if (CheckIfTodoExist(value)) popups.CreateNotificationWithIcon('This to do already exist', '/icons/ZondiconsInformationOutlineError.svg', 'error-notification')
+    if (CheckIfTodoExist(value)) popups.CreateNotificationWithIcon('This to do already exist', '/icons/ZondiconsInformationOutlineError.svg', 'error icon', 'error-notification')
     else {
       const todo = document.createElement('li')
       const todo_value = document.createElement('p')
@@ -264,7 +296,7 @@ function useTodo({ target, utils, popups }) {
    * @since 1.0.0
    */
   function DeleteTodo({ todo, todo_value }) {
-    const { btn_confirm } = popups.CreateConfirmationDialog('Deleting To Do', '/icons/ZondiconsInformationOutlineError.svg', 'warning-dialog', todo_value.innerText)
+    const { btn_confirm } = popups.CreateConfirmationDialog('Deleting To Do', '/icons/ZondiconsInformationOutlineError.svg', 'error icon', 'warning-dialog', todo_value.innerText)
     btn_confirm.addEventListener('click', () => utils.DeleteDOMElement(todo))
   }
 
@@ -280,7 +312,7 @@ function useTodo({ target, utils, popups }) {
     }))
     const json = JSON.stringify(new_collection)
     localStorage['todos'] = json
-    popups.CreateNotificationWithIcon('Progress saved successfully', '/icons/ZondiconsInformationOutlineSuccess.svg', 'success-notification')
+    popups.CreateNotificationWithIcon('Progress saved successfully', '/icons/ZondiconsInformationOutlineSuccess.svg', 'success icon', 'success-notification')
   }
 
   function LoadTodos() {
@@ -330,7 +362,21 @@ todos.LoadTodos()
 btn_submit.addEventListener('click', (event) => {
   event.preventDefault()
   if (input.value) todos.AddTodo({ value: input.value })
-  else popups.CreateNotificationWithIcon('Add a new to do', '/icons/ZondiconsInformationOutlineInform.svg', 'inform-notification')
+  else popups.CreateNotificationWithIcon('Add a new to do', '/icons/ZondiconsInformationOutlineInform.svg', 'inform icon', 'inform-notification')
 })
 
 btn_change_color_theme.addEventListener('click', () => utils.ChangeColorTheme())
+
+if (localStorage['color-theme'] == undefined) {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    utils.SetDarkTheme()
+  } else {
+    utils.SetWhiteTheme()
+  }
+} else {
+  if (utils.CheckIfColorThemeIsBlack()) {
+    utils.SetDarkTheme()
+  } else {
+    utils.SetWhiteTheme()
+  }
+}
