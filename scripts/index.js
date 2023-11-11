@@ -1,9 +1,11 @@
+'use strict'
+
 const header = document.querySelector('header')
 const todo_list = document.querySelector("[data-list='todos']")
 const input = document.querySelector("[data-input='todo']")
-const button_save = document.querySelector("[data-button='save-progress']")
-const button_submit = document.querySelector("[data-button='submit']")
-const button_change_color_theme = document.querySelector("[data-button='change-color-theme']")
+const btn_save = document.querySelector("[data-btn='save-progress']")
+const btn_submit = document.querySelector("[data-btn='submit']")
+const btn_change_color_theme = document.querySelector("[data-btn='change-color-theme']")
 const img_change_color_theme = document.querySelector("[data-image='change-color-theme']")
 
 const utils = {
@@ -12,24 +14,24 @@ const utils = {
     if (img_change_color_theme.src.includes('/icons/SolarMoonBold.svg')) img_change_color_theme.src = '/icons/SolarSunBold.svg'
     else img_change_color_theme.src = '/icons/SolarMoonBold.svg'
   },
-  DeleteDOMElement(element) {
-    element.remove()
+  DeleteDOMElement: (element) => element.remove(),
+  CreateBtn() {
+    let btn = document.createElement('button')
+    btn.type = 'button'
+    return btn
   },
-  CreateButton(text, _url, _alt) {
-    let button
-    if (text) {
-      button = document.createElement('button')
-      button.innerText = text
-    }
-
-    if (_url) {
-      button = document.createElement('img')
-      button.src = _url
-      button.alt = _alt
-    }
-
-    button.classList.add('button')
-    return button
+  CreateTextBtn(text) {
+    let btn = this.CreateBtn()
+    btn.innerText = text
+    return btn
+  },
+  CreateIconBtn(icon, alt) {
+    let new_btn = this.CreateBtn()
+    let new_img = document.createElement('img')
+    new_img.src = icon
+    new_img.alt = alt
+    new_btn.appendChild(new_img)
+    return new_btn
   },
 }
 
@@ -41,25 +43,20 @@ const popups = {
     const message = document.createElement('h3')
     const icon = document.createElement('img')
     const btn_group = document.createElement('div')
-    const btn_confirm = document.createElement('button')
-    const btn_cancel = document.createElement('button')
+    const btn_confirm = utils.CreateTextBtn('Confirm')
+    const btn_cancel = utils.CreateTextBtn('Cancel')
 
     dialog.classList.add(CSSClass, 'dialog', 'fade-in')
     icon_title_box.classList.add('icon-title-box')
     title.classList.add('dialog-title')
     message.classList.add('dialog-msg')
-    btn_group.classList.add('button-group')
-    btn_confirm.classList.add('button', 'button-confirm')
-    btn_cancel.classList.add('button', 'button-cancel')
-
-    btn_confirm.type = 'button'
-    btn_cancel.type = 'button'
+    btn_group.classList.add('btn-group')
+    btn_confirm.classList.add('btn', 'btn-confirm')
+    btn_cancel.classList.add('btn', 'btn-cancel')
 
     title.innerText = `${Title}:`
     message.innerText = Msg
     icon.src = Icon[0] == '/' ? Icon : `/${Icon}`
-    btn_confirm.innerText = 'Confirm'
-    btn_cancel.innerText = 'Cancel'
 
     icon_title_box.appendChild(icon)
     icon_title_box.appendChild(title)
@@ -107,7 +104,7 @@ const popups = {
 }
 
 function useTodo({ target, utils, popups }) {
-  button_save.addEventListener('click', () => SaveProgressInLocalStorage())
+  btn_save.addEventListener('click', () => SaveProgressInLocalStorage())
 
   function AddTodo({ value, class_list, value_class_list, btn_check_class_list, btn_edit_class_list, btn_delete_class_list }) {
     if (CheckIfTodoExist(value)) popups.CreateNotificationWithIcon('Error', '/icons/ZondiconsInformationOutlineError.svg', 'error-notification', 'this to do already exist')
@@ -115,37 +112,34 @@ function useTodo({ target, utils, popups }) {
       const li = document.createElement('li')
       const p = document.createElement('p')
       const div = document.createElement('div')
-      const button_check = utils.CreateButton('', '/icons/ZondiconsCheckmarkOutline.svg', 'Check todo button')
-      const button_edit = utils.CreateButton('', '/icons/ZondiconsCompose.svg', 'Edit todo button')
-      const button_delete = utils.CreateButton('', '/icons/ZondiconsCloseOutline.svg', 'Delete todo button')
+      const btn_check = utils.CreateIconBtn('/icons/ZondiconsCheckmarkOutline.svg', 'Check todo button')
+      const btn_edit = utils.CreateIconBtn('/icons/ZondiconsCompose.svg', 'Edit todo button')
+      const btn_delete = utils.CreateIconBtn('/icons/ZondiconsCloseOutline.svg', 'Delete todo button')
 
       li.id = crypto.randomUUID()
       p.innerText = value
 
       li.classList = class_list ?? 'todo fade-in'
-      button_check.classList = btn_check_class_list ?? 'button-check button-control'
-      button_edit.classList = btn_edit_class_list ?? 'button-edit'
-      button_delete.classList = btn_delete_class_list ?? 'button-delete button-control'
+      btn_check.classList = btn_check_class_list ?? 'btn-check btn-control icon-btn'
+      btn_edit.classList = btn_edit_class_list ?? 'btn-edit icon-btn'
+      btn_delete.classList = btn_delete_class_list ?? 'btn-delete btn-control icon-btn'
       p.classList = value_class_list ?? 'no-outline'
 
       li.classList.remove('is-editing')
-      button_edit.classList.remove('is-editing')
+      btn_edit.classList.remove('is-editing')
 
       p.spellcheck = true
-      button_check.type = 'button'
-      button_edit.type = 'button'
-      button_delete.type = 'button'
 
       li.appendChild(p)
       li.appendChild(div)
-      div.appendChild(button_check)
-      div.appendChild(button_edit)
-      div.appendChild(button_delete)
+      div.appendChild(btn_check)
+      div.appendChild(btn_edit)
+      div.appendChild(btn_delete)
       target.appendChild(li)
 
-      button_check.addEventListener('click', () => CheckTodo({ todo: li, todo_paragraph: p, btn_edit: button_edit }))
-      button_edit.addEventListener('click', () => EditTodo({ todo: li, todo_paragraph: p, btn_edit: button_edit }))
-      button_delete.addEventListener('click', () => DeleteTodo({ todo: li, todo_paragraph: p }))
+      btn_check.addEventListener('click', () => CheckTodo({ todo: li, todo_paragraph: p, btn_edit: btn_edit }))
+      btn_edit.addEventListener('click', () => EditTodo({ todo: li, todo_paragraph: p, btn_edit: btn_edit }))
+      btn_delete.addEventListener('click', () => DeleteTodo({ todo: li, todo_paragraph: p }))
 
       input.value = ''
     }
@@ -181,9 +175,9 @@ function useTodo({ target, utils, popups }) {
       todo_class_list: item.classList.value,
       todo_value: item.querySelector('p').innerText,
       todo_value_class_list: item.querySelector('p').classList.value,
-      button_check_class_list: item.querySelector('.button-check').classList.value,
-      button_edit_class_list: item.querySelector('.button-edit').classList.value,
-      button_delete_class_list: item.querySelector('.button-delete').classList.value,
+      btn_check_class_list: item.querySelector('.btn-check').classList.value,
+      btn_edit_class_list: item.querySelector('.btn-edit').classList.value,
+      btn_delete_class_list: item.querySelector('.btn-delete').classList.value,
     }))
     const json = JSON.stringify(new_collection)
     localStorage['todos'] = json
@@ -199,9 +193,9 @@ function useTodo({ target, utils, popups }) {
           value: todo.todo_value,
           class_list: todo.todo_class_list,
           value_class_list: todo.todo_value_class_list,
-          btn_check_class_list: todo.button_check_class_list,
-          btn_edit_class_list: todo.button_edit_class_list,
-          btn_delete_class_list: todo.button_delete_class_list,
+          btn_check_class_list: todo.btn_check_class_list,
+          btn_edit_class_list: todo.btn_edit_class_list,
+          btn_delete_class_list: todo.btn_delete_class_list,
         })
       })
     }
@@ -224,10 +218,10 @@ function useTodo({ target, utils, popups }) {
 const todos = useTodo({ target: todo_list, utils: utils, popups })
 todos.LoadTodos()
 
-button_submit.addEventListener('click', (event) => {
+btn_submit.addEventListener('click', (event) => {
   event.preventDefault()
   if (input.value) todos.AddTodo({ value: input.value })
   else popups.CreateNotificationWithIcon('Add a new to do', '/icons/ZondiconsInformationOutlineInform.svg', 'inform-notification')
 })
 
-button_change_color_theme.addEventListener('click', () => utils.ChangeColorTheme())
+btn_change_color_theme.addEventListener('click', () => utils.ChangeColorTheme())

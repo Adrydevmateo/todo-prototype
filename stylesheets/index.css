@@ -89,7 +89,7 @@ ol {
 }
 
 /* Id selector start */
-#button-save-progress {
+#btn-save-progress {
   border: none;
   background-color: transparent;
   border-bottom: 0.2rem solid var(--background-color-save);
@@ -97,14 +97,14 @@ ol {
   color: var(--font-color-base);
 }
 
-#button-save-progress span {
+#btn-save-progress span {
   display: block;
   padding-bottom: 0.4rem;
   font-weight: var(--font-weight-basic);
   font-size: 1rem;
 }
 
-#button-change-color-theme {
+#btn-change-color-theme {
   border: none;
   border-radius: 100%;
   padding: 0;
@@ -113,7 +113,7 @@ ol {
   padding-top: 0.6rem;
 }
 
-#button-change-color-theme img {
+#btn-change-color-theme img {
   transform: scale(1.02);
 }
 
@@ -129,7 +129,7 @@ ol {
   border-radius: 1rem;
 }
 
-#submit-button {
+#submit-btn {
   padding: 0;
   border-radius: 100%;
   display: flex;
@@ -169,8 +169,19 @@ ol {
 }
 /* Animation end */
 
-.button {
+.btn {
   cursor: pointer;
+}
+
+.icon-btn {
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  display: flex;
+}
+
+.icon-btn img {
+  border: none;
 }
 
 .is-checked {
@@ -211,7 +222,7 @@ ol {
   padding-bottom: 1rem;
 }
 
-.button-group {
+.btn-group {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
@@ -219,12 +230,12 @@ ol {
   justify-content: space-between;
 }
 
-.button-control {
+.btn-control {
   border-radius: 100%;
 }
 
-.button-confirm,
-.button-cancel {
+.btn-confirm,
+.btn-cancel {
   border: 0.2rem solid;
   padding: 1rem;
   border-radius: 1rem;
@@ -233,12 +244,12 @@ ol {
   width: 100%;
 }
 
-.button-confirm {
+.btn-confirm {
   border-color: var(--border-color-black-muted);
   font-weight: bold;
 }
 
-.button-cancel {
+.btn-cancel {
   border-color: var(--border-color-error);
   font-weight: bold;
 }
@@ -312,16 +323,16 @@ ol {
     opacity: 0.8;
   }
 
-  #submit-button:hover {
+  #submit-btn:hover {
     opacity: 0.6;
     cursor: pointer;
   }
 
-  #button-save-progress:hover {
+  #btn-save-progress:hover {
     transform: scale(1.1);
   }
 
-  #button-change-color-theme img:hover {
+  #btn-change-color-theme img:hover {
     transform: scale(1.12);
     cursor: pointer;
   }
@@ -332,23 +343,23 @@ ol {
     opacity: 1;
   }
 
-  .button-check:hover {
+  .btn-check:hover {
     box-shadow: var(--box-shadow-green);
     background-color: transparent;
     cursor: pointer;
   }
 
-  .button-edit:hover {
+  .btn-edit:hover {
     cursor: pointer;
   }
 
-  .button-delete:hover {
+  .btn-delete:hover {
     box-shadow: var(--box-shadow-red);
     cursor: pointer;
   }
 
-  .button-confirm:hover,
-  .button-cancel:hover {
+  .btn-confirm:hover,
+  .btn-cancel:hover {
     transform: scale(1.1);
   }
 
