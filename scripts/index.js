@@ -102,6 +102,31 @@ const popups = {
 function useTodo({ target, utils, popups }) {
   btn_save.addEventListener('click', () => SaveProgressInLocalStorage())
 
+  /** Adds a new todo to the list of todos
+   * @param {Object} elements - required elements
+   * @param {String} elements.value - new todo value
+   * @param {String} elements.class_list - new css classes for the todo
+   * @param {String} elements.value_class_list - new css classes for the element containing the value of the todo
+   * @param {String} elements.btn_check_class_list - new css classes for the button that sets the todo as completed
+   * @param {String} elements.btn_edit_class_list - new css classes for the button that allows editing the todo
+   * @param {String} elements.btn_delete_class_list - new css classes for the button that deletes the todo
+   * @returns {void}
+   * @example
+   * const new_todo = {
+   *  value: 'new todo',
+   *  class_list: 'class class ...',
+   *  value_class_list: 'class class ...',
+   *  btn_check_class_list: 'class class ...',
+   *  btn_edit_class_list: 'class class ...',
+   *  btn_delete_class_list: 'class class ...'
+   * }
+   * AddTodo(new_todo)
+   *
+   * @example
+   * AddTodo({ 'new todo', 'class class ...', 'class class ...', 'class class ...', 'class class ...', 'class class ...' })
+   *
+   * @since 1.0.0
+   */
   function AddTodo({ value, class_list, value_class_list, btn_check_class_list, btn_edit_class_list, btn_delete_class_list }) {
     if (CheckIfTodoExist(value)) popups.CreateNotificationWithIcon('This to do already exist', '/icons/ZondiconsInformationOutlineError.svg', 'error-notification')
     else {
@@ -133,7 +158,7 @@ function useTodo({ target, utils, popups }) {
       btn_group.appendChild(btn_delete)
       target.appendChild(todo)
 
-      btn_check.addEventListener('click', () => CheckTodo({ todo, todo_value, btn_edit }))
+      btn_check.addEventListener('click', () => CompleteTodo({ todo, todo_value, btn_edit }))
       btn_edit.addEventListener('click', () => EditTodo({ todo, todo_value, btn_edit }))
       btn_delete.addEventListener('click', () => DeleteTodo({ todo, todo_value }))
 
@@ -141,6 +166,26 @@ function useTodo({ target, utils, popups }) {
     }
   }
 
+  /** Sets a todo as editable
+   * @param {Object} elements - required elements
+   * @param {HTMLElement} elements.todo - The todo
+   * @param {HTMLElement} elements.todo_value - Contains the value of the todo
+   * @param {HTMLElement} elements.btn_edit - button that allows the todo to be edited
+   * @returns {void}
+   *
+   * @example
+   * const todo_to_edit = {
+   *  todo: todo element,
+   *  todo_value: current todo value,
+   *  btn_edit: button element
+   * }
+   * EditTodo(todo_to_edit)
+   *
+   * @example
+   * EditTodo({ todo: todo element, todo_value: current todo value, btn_edit: button element })
+   *
+   * @since 1.0.0
+   */
   function EditTodo({ todo, todo_value, btn_edit }) {
     todo_value.contentEditable = 'true'
     todo.classList.add('is-editing')
@@ -148,6 +193,26 @@ function useTodo({ target, utils, popups }) {
     btn_edit.addEventListener('click', () => UpdateTodo({ todo, todo_value, btn_edit }))
   }
 
+  /** Updates a todo value
+   * @param {Object} elements - required elements
+   * @param {HTMLElement} elements.todo - The todo
+   * @param {HTMLElement} elements.todo_value - Contains the value of the todo
+   * @param {HTMLElement} elements.btn_edit - button that allows the todo to be edited
+   * @returns {void}
+   *
+   * @example
+   * const todo_to_update = {
+   *  todo: todo element,
+   *  todo_value: current todo value,
+   *  btn_edit: button element
+   * }
+   * UpdateTodo(todo_to_update)
+   *
+   * @example
+   * UpdateTodo({ todo: todo element, todo_value: current todo value, btn_edit: button element })
+   *
+   * @since 1.0.0
+   */
   function UpdateTodo({ todo, todo_value, btn_edit }) {
     todo_value.contentEditable = 'false'
     todo.classList.remove('is-editing')
@@ -155,11 +220,49 @@ function useTodo({ target, utils, popups }) {
     btn_edit.addEventListener('click', () => EditTodo({ todo, todo_value, btn_edit }))
   }
 
-  function CheckTodo({ todo, todo_value, btn_edit }) {
+  /** Sets a todo as completed
+   * @param {Object} elements - required elements
+   * @param {HTMLElement} elements.todo - The todo
+   * @param {HTMLElement} elements.todo_value - Contains the value of the todo
+   * @param {HTMLElement} elements.btn_edit - button that allows the todo to be edited
+   * @returns {void}
+   *
+   * @example
+   * const todo_to_complete = {
+   *  todo: todo element,
+   *  todo_value: current todo value,
+   *  btn_edit: button element
+   * }
+   * CompleteTodo(todo_to_complete)
+   *
+   * @example
+   * CompleteTodo({ todo: todo element, todo_value: current todo value, btn_edit: button element })
+   *
+   * @since 1.0.0
+   */
+  function CompleteTodo({ todo, todo_value, btn_edit }) {
     todo.classList.toggle('is-checked')
     UpdateTodo({ todo, todo_value, btn_edit })
   }
 
+  /** Deletes a todo
+   * @param {Object} elements - required elements
+   * @param {HTMLElement} elements.todo - The todo
+   * @param {HTMLElement} elements.todo_value - Contains the value of the todo
+   * @returns {void}
+   *
+   * @example
+   * const todo_to_delete = {
+   *  todo: todo element,
+   *  todo_value: current todo value
+   * }
+   * DeleteTodo(todo_to_delete)
+   *
+   * @example
+   * DeleteTodo({ todo: todo element, todo_value: current todo value })
+   *
+   * @since 1.0.0
+   */
   function DeleteTodo({ todo, todo_value }) {
     const { btn_confirm } = popups.CreateConfirmationDialog('Deleting To Do', '/icons/ZondiconsInformationOutlineError.svg', 'warning-dialog', todo_value.innerText)
     btn_confirm.addEventListener('click', () => utils.DeleteDOMElement(todo))
@@ -197,6 +300,16 @@ function useTodo({ target, utils, popups }) {
     }
   }
 
+  /** Checks if a todo already exist
+   * @param {todo} todo - required todo to be checked
+   * @returns {number} 1 if the todo exists, 0 if not
+   *
+   * @example
+   * const todo_exist = CheckIfTodoExist(todo)
+   * console.log(todo_exist) // Either 1 or 0
+   *
+   * @since 1.0.0
+   */
   function CheckIfTodoExist(todo) {
     const collection = Array.from(target.children)
     for (let index = 0; index < collection.length; index++) {
@@ -208,7 +321,7 @@ function useTodo({ target, utils, popups }) {
     return 0
   }
 
-  return { AddTodo, EditTodo, UpdateTodo, CheckTodo, SaveProgressInLocalStorage, LoadTodos, CheckIfTodoExist }
+  return { AddTodo, EditTodo, UpdateTodo, CompleteTodo, SaveProgressInLocalStorage, LoadTodos, CheckIfTodoExist }
 }
 
 const todos = useTodo({ target: todo_list, utils: utils, popups })
