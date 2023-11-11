@@ -36,27 +36,27 @@ const utils = {
 }
 
 const popups = {
-  CreateConfirmationDialog(Title, Icon, CSSClass, Msg) {
+  CreateConfirmationDialog(new_title, new_icon, css_classes, new_msg) {
     const dialog = document.createElement('dialog')
     const icon_title_box = document.createElement('div')
     const title = document.createElement('h3')
-    const message = document.createElement('h3')
+    const msg = document.createElement('h3')
     const icon = document.createElement('img')
     const btn_group = document.createElement('div')
     const btn_confirm = utils.CreateTextBtn('Confirm')
     const btn_cancel = utils.CreateTextBtn('Cancel')
 
-    dialog.classList.add(CSSClass, 'dialog', 'fade-in')
+    dialog.classList.add(css_classes, 'dialog', 'fade-in')
     icon_title_box.classList.add('icon-title-box')
     title.classList.add('dialog-title')
-    message.classList.add('dialog-msg')
+    msg.classList.add('dialog-msg')
     btn_group.classList.add('btn-group')
     btn_confirm.classList.add('btn', 'btn-confirm')
     btn_cancel.classList.add('btn', 'btn-cancel')
 
-    title.innerText = `${Title}:`
-    message.innerText = Msg
-    icon.src = Icon[0] == '/' ? Icon : `/${Icon}`
+    title.innerText = `${new_title}:`
+    msg.innerText = new_msg
+    icon.src = new_icon[0] == '/' ? new_icon : `/${new_icon}`
 
     icon_title_box.appendChild(icon)
     icon_title_box.appendChild(title)
@@ -65,7 +65,7 @@ const popups = {
     btn_group.appendChild(btn_confirm)
 
     dialog.appendChild(icon_title_box)
-    dialog.appendChild(message)
+    dialog.appendChild(msg)
     dialog.appendChild(btn_group)
 
     document.body.appendChild(dialog)
@@ -75,27 +75,24 @@ const popups = {
 
     return { btn_confirm, btn_cancel }
   },
-  CreateNotificationWithIcon(Title, Icon, CSSClass, _Msg) {
+  CreateNotificationWithIcon(new_title, new_icon, css_classes) {
     const notification = document.createElement('dialog')
     const icon_title_box = document.createElement('div')
     const title = document.createElement('h3')
-    const message = document.createElement('h3')
     const icon = document.createElement('img')
 
-    notification.classList.add(CSSClass, 'notification', 'slide-from-top')
+    notification.classList.add(css_classes, 'notification', 'slide-from-top')
     icon_title_box.classList.add('icon-title-box')
     title.classList.add('notification-title')
-    message.classList.add('notification-msg')
 
-    title.innerText = `${Title}${_Msg ? ':' : ''}`
-    message.innerText = _Msg
-    icon.src = Icon[0] == '/' ? Icon : `/${Icon}`
+    title.innerText = new_title
+    icon.src = new_icon[0] == '/' ? new_icon : `/${new_icon}`
 
     icon_title_box.appendChild(icon)
     icon_title_box.appendChild(title)
-    notification.appendChild(icon_title_box)
 
-    if (_Msg) notification.appendChild(message)
+    notification.appendChild(icon_title_box)
+    notification.appendChild(title)
 
     document.body.appendChild(notification)
 
@@ -107,65 +104,65 @@ function useTodo({ target, utils, popups }) {
   btn_save.addEventListener('click', () => SaveProgressInLocalStorage())
 
   function AddTodo({ value, class_list, value_class_list, btn_check_class_list, btn_edit_class_list, btn_delete_class_list }) {
-    if (CheckIfTodoExist(value)) popups.CreateNotificationWithIcon('Error', '/icons/ZondiconsInformationOutlineError.svg', 'error-notification', 'this to do already exist')
+    if (CheckIfTodoExist(value)) popups.CreateNotificationWithIcon('This to do already exist', '/icons/ZondiconsInformationOutlineError.svg', 'error-notification')
     else {
-      const li = document.createElement('li')
-      const p = document.createElement('p')
-      const div = document.createElement('div')
+      const todo = document.createElement('li')
+      const todo_value = document.createElement('p')
+      const btn_group = document.createElement('div')
       const btn_check = utils.CreateIconBtn('/icons/ZondiconsCheckmarkOutline.svg', 'Check todo button')
       const btn_edit = utils.CreateIconBtn('/icons/ZondiconsCompose.svg', 'Edit todo button')
       const btn_delete = utils.CreateIconBtn('/icons/ZondiconsCloseOutline.svg', 'Delete todo button')
 
-      li.id = crypto.randomUUID()
-      p.innerText = value
+      todo.id = crypto.randomUUID()
+      todo_value.innerText = value
 
-      li.classList = class_list ?? 'todo fade-in'
+      todo.classList = class_list ?? 'todo fade-in'
       btn_check.classList = btn_check_class_list ?? 'btn-check btn-control icon-btn'
       btn_edit.classList = btn_edit_class_list ?? 'btn-edit icon-btn'
       btn_delete.classList = btn_delete_class_list ?? 'btn-delete btn-control icon-btn'
-      p.classList = value_class_list ?? 'no-outline'
+      todo_value.classList = value_class_list ?? 'no-outline'
 
-      li.classList.remove('is-editing')
+      todo.classList.remove('is-editing')
       btn_edit.classList.remove('is-editing')
 
-      p.spellcheck = true
+      todo_value.spellcheck = true
 
-      li.appendChild(p)
-      li.appendChild(div)
-      div.appendChild(btn_check)
-      div.appendChild(btn_edit)
-      div.appendChild(btn_delete)
-      target.appendChild(li)
+      todo.appendChild(todo_value)
+      todo.appendChild(btn_group)
+      btn_group.appendChild(btn_check)
+      btn_group.appendChild(btn_edit)
+      btn_group.appendChild(btn_delete)
+      target.appendChild(todo)
 
-      btn_check.addEventListener('click', () => CheckTodo({ todo: li, todo_paragraph: p, btn_edit: btn_edit }))
-      btn_edit.addEventListener('click', () => EditTodo({ todo: li, todo_paragraph: p, btn_edit: btn_edit }))
-      btn_delete.addEventListener('click', () => DeleteTodo({ todo: li, todo_paragraph: p }))
+      btn_check.addEventListener('click', () => CheckTodo({ todo, todo_value, btn_edit }))
+      btn_edit.addEventListener('click', () => EditTodo({ todo, todo_value, btn_edit }))
+      btn_delete.addEventListener('click', () => DeleteTodo({ todo, todo_value }))
 
       input.value = ''
     }
   }
 
-  function EditTodo({ todo, todo_paragraph, btn_edit }) {
-    todo_paragraph.contentEditable = 'true'
+  function EditTodo({ todo, todo_value, btn_edit }) {
+    todo_value.contentEditable = 'true'
     todo.classList.add('is-editing')
     btn_edit.classList.add('is-editing')
-    btn_edit.addEventListener('click', () => UpdateTodo({ todo, todo_paragraph, btn_edit }))
+    btn_edit.addEventListener('click', () => UpdateTodo({ todo, todo_value, btn_edit }))
   }
 
-  function UpdateTodo({ todo, todo_paragraph, btn_edit }) {
-    todo_paragraph.contentEditable = 'false'
+  function UpdateTodo({ todo, todo_value, btn_edit }) {
+    todo_value.contentEditable = 'false'
     todo.classList.remove('is-editing')
     btn_edit.classList.remove('is-editing')
-    btn_edit.addEventListener('click', () => EditTodo({ todo, todo_paragraph, btn_edit }))
+    btn_edit.addEventListener('click', () => EditTodo({ todo, todo_value, btn_edit }))
   }
 
-  function CheckTodo({ todo, todo_paragraph, btn_edit }) {
+  function CheckTodo({ todo, todo_value, btn_edit }) {
     todo.classList.toggle('is-checked')
-    UpdateTodo({ todo, todo_paragraph, btn_edit })
+    UpdateTodo({ todo, todo_value, btn_edit })
   }
 
-  function DeleteTodo({ todo, todo_paragraph }) {
-    const { btn_confirm } = popups.CreateConfirmationDialog('Deleting To Do', '/icons/ZondiconsInformationOutlineError.svg', 'warning-dialog', todo_paragraph.innerText)
+  function DeleteTodo({ todo, todo_value }) {
+    const { btn_confirm } = popups.CreateConfirmationDialog('Deleting To Do', '/icons/ZondiconsInformationOutlineError.svg', 'warning-dialog', todo_value.innerText)
     btn_confirm.addEventListener('click', () => utils.DeleteDOMElement(todo))
   }
 

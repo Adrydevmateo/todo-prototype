@@ -24,7 +24,6 @@
   --font-color-success-title: var(--primary-green);
   --font-color-inform-title: var(--primary-blue);
   --font-color-error-title: var(--primary-red);
-  --font-color-notification-msg: var(--tuna);
   --font-color-dialog-msg: var(--primary-red);
 
   --box-shadow-orange: 0rem 0.2rem 1rem 0rem var(--primary-orange);
@@ -145,7 +144,6 @@ ol {
   --background-color-base: var(--dark);
   --font-color-base: var(--ghost-white);
   --background-color-notification: var(--dark);
-  --font-color-notification-msg: var(--ghost-white);
 }
 
 .dark-theme #input-todo {
@@ -287,10 +285,6 @@ ol {
 
 .warning-dialog {
   border-color: var(--border-color-dialog-delete);
-}
-
-.notification-msg {
-  color: var(--font-color-notification-msg);
 }
 
 .success-notification {
