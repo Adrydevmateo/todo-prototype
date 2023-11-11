@@ -5,6 +5,7 @@
   --primary-green: #91dfcd;
   --primary-blue: #00c3ff;
   --tuna: #565f6e;
+  --tuna-muted: hsla(218, 12%, 38%, 0.6);
   --dark: #19222F;
   --ghost-white: #f6f9ff;
 
@@ -16,13 +17,15 @@
   --border-color-inform: var(--primary-blue);
   --border-color-warning: var(--primary-orange);
   --border-color-error: var(--primary-red);
+  --border-color-dialog-delete: var(--primary-red);
+  --border-color-black-muted: var(--tuna-muted);
 
   --font-color-base: var(--tuna);
   --font-color-success-title: var(--primary-green);
   --font-color-inform-title: var(--primary-blue);
   --font-color-error-title: var(--primary-red);
   --font-color-notification-msg: var(--tuna);
-  --font-color-dialog-msg: var(--Dark);
+  --font-color-dialog-msg: var(--primary-red);
 
   --box-shadow-orange: 0rem 0.2rem 1rem 0rem var(--primary-orange);
   --box-shadow-green: 0rem 0.2rem 1rem 0rem var(--primary-green);
@@ -147,6 +150,7 @@ form {
   border-radius: 1rem;
   color: var(--font-color-base);
   background-color: var(--background-color-base);
+  width: 100%;
 }
 
 .button-group {
@@ -154,15 +158,17 @@ form {
   gap: 1rem;
   margin-bottom: 1rem;
   width: 100%;
-  justify-content: end;
+  justify-content: space-between;
 }
 
 .button-confirm {
-  border-color: var(--primary-green);
+  border-color: var(--border-color-black-muted);
+  font-weight: bold;
 }
 
 .button-cancel {
   border-color: var(--primary-red);
+  font-weight: bold;
 }
 
 .is-checked {
@@ -261,12 +267,16 @@ form {
   color: var(--font-color-dialog-msg);
 }
 
+.dialog .dialog-msg {
+  color: var(--font-color-dialog-msg);
+}
+
 .notification-msg {
   color: var(--font-color-notification-msg);
 }
 
 .warning-dialog {
-  border-color: var(--border-color-warning);
+  border-color: var(--border-color-dialog-delete);
 }
 
 .success-notification {
@@ -305,6 +315,11 @@ form {
     transform: scale(1);
   }
 
+  .dialog img:hover {
+    transform: unset;
+    cursor: unset;
+  }
+
   img:hover {
     cursor: pointer;
     transform: scale(1.1);
@@ -317,6 +332,11 @@ form {
 
   .button-delete:hover {
     box-shadow: var(--box-shadow-red);
+  }
+
+  .button-confirm:hover,
+  .button-cancel:hover {
+    transform: scale(1.1);
   }
 
   #input-todo:hover {
@@ -383,7 +403,11 @@ form {
     opacity: 0;
   }
 
-  50% {
+  25% {
     opacity: 0.8;
+  }
+
+  30% {
+    opacity: 1;
   }
 }

@@ -41,7 +41,7 @@ function useDialog() {
     const btn_confirm = document.createElement("button")
     const btn_cancel = document.createElement("button")
 
-    dialog.classList.add(CSSClass, "dialog")
+    dialog.classList.add(CSSClass, "dialog", "fade-in")
     icon_title_box.classList.add("icon-title-box")
     title.classList.add("dialog-title")
     message.classList.add("dialog-msg")
@@ -172,7 +172,7 @@ function useTodo(target) {
       }
 
       function DeleteTodo() {
-        const { btn_confirm } = dialogs.CreateConfirmationDialog("Deleting To Do", "ZondiconsInformationOutlineWarning.svg", "warning-dialog", p.innerText)
+        const { btn_confirm } = dialogs.CreateConfirmationDialog("Deleting To Do", "ZondiconsInformationOutlineError.svg", "warning-dialog", p.innerText)
         btn_confirm.addEventListener("click", () => {
           li.remove()
         })
