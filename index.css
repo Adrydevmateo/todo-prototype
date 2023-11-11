@@ -239,7 +239,7 @@ ol {
 }
 
 .button-cancel {
-  border-color: var(--primary-red);
+  border-color: var(--border-color-error);
   font-weight: bold;
 }
 

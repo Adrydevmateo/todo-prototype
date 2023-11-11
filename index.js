@@ -8,11 +8,8 @@ const img_change_color_theme = document.querySelector("[data-image='change-color
 
 button_submit.addEventListener('click', (event) => {
   event.preventDefault()
-  if (input.value) {
-    todos.CreateTodo(input.value)
-  } else {
-    dialogs.CreateNotificationWithIcon('Add a new to do', 'ZondiconsInformationOutlineInform.svg', 'inform-notification')
-  }
+  if (input.value) todos.CreateTodo(input.value)
+  else dialogs.CreateNotificationWithIcon('Add a new to do', 'ZondiconsInformationOutlineInform.svg', 'inform-notification')
 })
 
 button_change_color_theme.addEventListener('click', () => ChangeColorTheme())
@@ -21,12 +18,12 @@ const CapitalizeText = (txt) => txt.replace(/\b\w/g, (letter) => letter.toUpperC
 
 function ChangeColorTheme() {
   document.body.classList.toggle('dark-theme')
-  console.log(img_change_color_theme.src)
-  if (img_change_color_theme.src.includes('/SolarMoonBold.svg')) {
-    img_change_color_theme.src = '/SolarSunBold.svg'
-  } else {
-    img_change_color_theme.src = '/SolarMoonBold.svg'
-  }
+  if (img_change_color_theme.src.includes('/SolarMoonBold.svg')) img_change_color_theme.src = '/SolarSunBold.svg'
+  else img_change_color_theme.src = '/SolarMoonBold.svg'
+}
+
+function DeleteHtmlElement(element) {
+  element.remove()
 }
 
 function useDialog() {
@@ -111,9 +108,8 @@ function useTodo(target) {
   button_save.addEventListener('click', () => SaveProgress())
 
   function CreateTodo(todo, _todo_class_list, _todo_value_class_list, _button_check_class_list, _button_edit_class_list, _button_delete_class_list) {
-    if (CheckIfTodoExist(todo)) {
-      dialogs.CreateNotificationWithIcon('Error', 'ZondiconsInformationOutlineError.svg', 'error-notification', 'this to do already exist')
-    } else {
+    if (CheckIfTodoExist(todo)) dialogs.CreateNotificationWithIcon('Error', 'ZondiconsInformationOutlineError.svg', 'error-notification', 'this to do already exist')
+    else {
       const li = document.createElement('li')
       const p = document.createElement('p')
       const div = document.createElement('div')
@@ -121,9 +117,9 @@ function useTodo(target) {
       const button_edit = CreateButton('', '/ZondiconsCompose.svg', 'Edit todo button')
       const button_delete = CreateButton('', '/ZondiconsCloseOutline.svg', 'Delete todo button')
 
+      li.id = crypto.randomUUID()
       p.innerText = todo
 
-      li.id = crypto.randomUUID()
       li.classList = _todo_class_list ?? 'todo fade-in'
       button_check.classList = _button_check_class_list ?? 'button-check button-control'
       button_edit.classList = _button_edit_class_list ?? 'button-edit'
@@ -138,16 +134,16 @@ function useTodo(target) {
       button_edit.type = 'button'
       button_delete.type = 'button'
 
-      button_check.addEventListener('click', () => CheckTodo())
-      button_edit.addEventListener('click', () => EditTodo())
-      button_delete.addEventListener('click', () => DeleteTodo())
-
       li.appendChild(p)
       li.appendChild(div)
       div.appendChild(button_check)
       div.appendChild(button_edit)
       div.appendChild(button_delete)
       target.appendChild(li)
+
+      button_check.addEventListener('click', () => CheckTodo())
+      button_edit.addEventListener('click', () => EditTodo())
+      button_delete.addEventListener('click', () => DeleteTodo())
 
       input.value = ''
 
@@ -172,9 +168,7 @@ function useTodo(target) {
 
       function DeleteTodo() {
         const { btn_confirm } = dialogs.CreateConfirmationDialog('Deleting To Do', 'ZondiconsInformationOutlineError.svg', 'warning-dialog', p.innerText)
-        btn_confirm.addEventListener('click', () => {
-          li.remove()
-        })
+        btn_confirm.addEventListener('click', () => DeleteHtmlElement(li))
       }
     }
   }
@@ -215,9 +209,9 @@ function useTodo(target) {
     const todos = localStorage['todos']
     if (todos) {
       const collection = Array.from(JSON.parse(todos))
-      collection.forEach((todo) => {
-        CreateTodo(todo.todo_value, todo.todo_class_list, todo.todo_value_class_list, todo.button_check_class_list, todo.button_edit_class_list, todo.button_delete_class_list)
-      })
+      collection.forEach((todo) =>
+        CreateTodo(todo.todo_value, todo.todo_class_list, todo.todo_value_class_list, todo.button_check_class_list, todo.button_edit_class_list, todo.button_delete_class_list),
+      )
     }
   }
 
