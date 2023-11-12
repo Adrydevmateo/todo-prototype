@@ -8,6 +8,59 @@ const btn_change_color_theme = document.querySelector("[data-btn='change-color-t
 const img_change_color_theme = document.querySelector("[data-image='change-color-theme']")
 const is_dark_mode_active = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 const current_color_theme = localStorage['color-theme']
+let root = document.querySelector('html')
+const custom_btn = document.getElementById('custom-btn')
+
+const translations = {
+  page_title: {
+    en: 'TO-DO Application',
+    es: 'Aplicación de Tareas',
+  },
+  save_progress: {
+    en: 'save progress',
+    es: 'guardar progreso',
+  },
+  todo_exist: {
+    en: 'This to-do already exist',
+    es: 'Esta tarea ya existe',
+  },
+  deleting_todo: {
+    en: 'Deleting to-do',
+    es: 'Eliminando tarea',
+  },
+  progress_saved: {
+    en: 'Progress saved successfully',
+    es: 'Progreso guardado con éxito',
+  },
+  add_todo: {
+    en: 'Add a new to-do',
+    es: 'Agrega una nueva tarea',
+  },
+  confirm: {
+    en: 'Confirm',
+    es: 'Confirmar',
+  },
+  cancel: {
+    en: 'Cancel',
+    es: 'Cancelar',
+  },
+}
+
+if (localStorage['lang'] != undefined) {
+  document.querySelector('html').lang = localStorage['lang']
+}
+
+function Translate() {
+  let root = document.querySelector('html')
+  const page_title = document.querySelector("[data-translate='page-title']")
+  const save_progress = document.querySelector("[data-translate='save-progress']")
+
+  page_title.innerText = translations.page_title[root.lang]
+  save_progress.innerText = translations.save_progress[root.lang]
+  input.placeholder = translations.add_todo[root.lang]
+}
+
+custom_btn.addEventListener('click', () => ChangeLanguage())
 
 const utils = {
   ChangeColorTheme() {
@@ -76,8 +129,8 @@ const popups = {
     const description = document.createElement('h3')
     const icon = document.createElement('img')
     const btn_group = document.createElement('div')
-    const btn_confirm = utils.CreateTextBtn('Confirm')
-    const btn_cancel = utils.CreateTextBtn('Cancel')
+    const btn_confirm = utils.CreateTextBtn(translations.confirm[root.lang])
+    const btn_cancel = utils.CreateTextBtn(translations.cancel[root.lang])
 
     dialog.classList.add(css_classes, 'dialog', 'fade-in')
 
@@ -322,7 +375,7 @@ function useTodo({ target, utils, popups }) {
    * @since 1.0.0
    */
   function DeleteTodo({ todo, todo_value }) {
-    const { btn_confirm } = popups.CreateConfirmationDialog('Deleting To Do', '/icons/ZondiconsInformationOutlineError.svg', 'error icon', 'warning-dialog', todo_value.innerText)
+    const { btn_confirm } = popups.CreateConfirmationDialog(translations.deleting_todo[root.lang], '/icons/ZondiconsInformationOutlineError.svg', 'error icon', 'warning-dialog', todo_value.innerText)
     btn_confirm.addEventListener('click', () => utils.DeleteDOMElement(todo))
   }
 
@@ -337,12 +390,13 @@ function useTodo({ target, utils, popups }) {
       btn_delete_class_list: item.querySelector('.btn-delete').classList.value,
     }))
     const json = JSON.stringify(new_collection)
-    localStorage['todos'] = json
-    popups.CreateNotificationWithIcon('Progress saved successfully', '/icons/ZondiconsInformationOutlineSuccess.svg', 'success icon', 'success-notification')
+    localStorage[`todos_${root.lang}`] = json
+    popups.CreateNotificationWithIcon(translations.progress_saved[root.lang], '/icons/ZondiconsInformationOutlineSuccess.svg', 'success icon', 'success-notification')
   }
 
   function LoadTodos() {
-    const todos = localStorage['todos']
+    DeleteAllTodos()
+    const todos = localStorage[`todos_${root.lang}`]
     if (todos) {
       const collection = Array.from(JSON.parse(todos))
       collection.forEach((todo) => {
@@ -355,6 +409,12 @@ function useTodo({ target, utils, popups }) {
           btn_delete_class_list: todo.btn_delete_class_list,
         })
       })
+    }
+  }
+
+  function DeleteAllTodos() {
+    while (target.firstChild) {
+      target.removeChild(target.firstChild)
     }
   }
 
@@ -390,7 +450,14 @@ todos.LoadTodos()
 btn_submit.addEventListener('click', (event) => {
   event.preventDefault()
   if (input.value) todos.AddTodo({ value: input.value })
-  else popups.CreateNotificationWithIcon('Add a new to do', '/icons/ZondiconsInformationOutlineInform.svg', 'inform icon', 'inform-notification')
+  else popups.CreateNotificationWithIcon(translations.add_todo[root.lang], '/icons/ZondiconsInformationOutlineInform.svg', 'inform icon', 'inform-notification')
 })
 
 btn_change_color_theme.addEventListener('click', () => utils.ChangeColorTheme())
+
+function ChangeLanguage() {
+  let root = document.querySelector('html')
+  root.lang = root.lang == 'en' ? 'es' : 'en'
+  Translate()
+  todos.LoadTodos()
+}
