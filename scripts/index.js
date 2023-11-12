@@ -9,7 +9,7 @@ const img_change_color_theme = document.querySelector("[data-image='change-color
 const is_dark_mode_active = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 const current_color_theme = localStorage['color-theme']
 let root = document.querySelector('html')
-const custom_btn = document.getElementById('custom-btn')
+const btn_change_language = document.querySelector("[data-translate='change-lang']")
 
 const translations = {
   page_title: {
@@ -60,7 +60,7 @@ function Translate() {
   input.placeholder = translations.add_todo[root.lang]
 }
 
-custom_btn.addEventListener('click', () => ChangeLanguage())
+btn_change_language.addEventListener('click', () => ChangeLanguage())
 
 const utils = {
   ChangeColorTheme() {
