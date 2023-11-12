@@ -322,6 +322,11 @@ ol {
     cursor: pointer;
   }
 
+  .dark-theme #submit-btn:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+
   #btn-save-progress:hover {
     transform: scale(1.1);
   }

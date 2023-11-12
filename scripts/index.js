@@ -11,10 +11,16 @@ const current_color_theme = localStorage['color-theme']
 
 const utils = {
   ChangeColorTheme() {
-    if (this.CheckIfColorThemeIsBlack()) {
-      this.SetWhiteTheme()
+    if (this.CheckIfColorThemeIsBlack()) this.SetWhiteTheme()
+    else this.SetDarkTheme()
+  },
+  SetColorTheme() {
+    if (localStorage['color-theme'] == undefined) {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) utils.SetDarkTheme()
+      else utils.SetWhiteTheme()
     } else {
-      this.SetDarkTheme()
+      if (utils.CheckIfColorThemeIsBlack()) utils.SetDarkTheme()
+      else utils.SetWhiteTheme()
     }
   },
   SetDarkTheme() {
@@ -53,11 +59,21 @@ const utils = {
 }
 
 const popups = {
-  CreateConfirmationDialog(new_title, new_icon, icon_alt, css_classes, new_msg) {
+  /** Creates a dialog that allows you to confirm or cancel an action.
+   * @param {String} new_title - Dialog title.
+   * @param {String} new_icon - Url of the icon.
+   * @param {String} icon_alt - Alt message of the icon.
+   * @param {String} css_classes - CSS classes for the dialog.
+   * @param {String} new_description - Dialog description.
+   * @returns {Object} An object containing functions to interact with the dialog.
+   *
+   * @since 1.0.0
+   */
+  CreateConfirmationDialog(new_title, new_icon, icon_alt, css_classes, new_description) {
     const dialog = document.createElement('dialog')
     const title_box = document.createElement('div')
     const title = document.createElement('h3')
-    const msg = document.createElement('h3')
+    const description = document.createElement('h3')
     const icon = document.createElement('img')
     const btn_group = document.createElement('div')
     const btn_confirm = utils.CreateTextBtn('Confirm')
@@ -68,14 +84,14 @@ const popups = {
     title_box.classList.add('icon-title-box')
     title.classList.add('dialog-title')
 
-    msg.classList.add('dialog-msg')
+    description.classList.add('dialog-msg')
 
     btn_group.classList.add('btn-group')
     btn_confirm.classList.add('btn', 'btn-confirm')
     btn_cancel.classList.add('btn', 'btn-cancel')
 
     title.innerText = `${new_title}:`
-    msg.innerText = new_msg
+    description.innerText = new_description
 
     icon.src = new_icon[0] == '/' ? new_icon : `/${new_icon}`
     icon.alt = icon_alt
@@ -87,7 +103,7 @@ const popups = {
     btn_group.appendChild(btn_confirm)
 
     dialog.appendChild(title_box)
-    dialog.appendChild(msg)
+    dialog.appendChild(description)
     dialog.appendChild(btn_group)
 
     document.body.appendChild(dialog)
@@ -98,11 +114,13 @@ const popups = {
     return { btn_confirm, btn_cancel }
   },
 
-  // TODO: Add an alt to the icon
-  /** Creates a notification pop up with an icon included
-   * @param {String} new_msg - message to be shown in the pop up
-   * @param {String} new_icon - url of the icon
-   * @param {String} css_classes - css classes for the pop up
+  /** Creates a notification with an icon included.
+   * @param {String} new_msg - Message to be shown in the popup.
+   * @param {String} new_icon - Url of the icon.
+   * @param {String} icon_alt - Alt message of the icon.
+   * @param {String} css_classes - CSS classes for the popup.
+   *
+   * @since 1.0.0
    */
   CreateNotificationWithIcon(new_msg, new_icon, icon_alt, css_classes) {
     const notification = document.createElement('dialog')
@@ -131,17 +149,25 @@ const popups = {
   },
 }
 
+/** Manages the functionality of a to-do list.
+ * @module useTodo
+ * @param {Object} options - Configuration options for the module.
+ * @param {HTMLElement} options.target - The target element where the to-do list will be rendered.
+ * @param {Object} options.utils - Utility functions used by the module.
+ * @param {Object} options.popups - Popup-related functions used by the module.
+ * @returns {Object} An object containing functions to interact with the to-do list.
+ */
 function useTodo({ target, utils, popups }) {
   btn_save.addEventListener('click', () => SaveProgressInLocalStorage())
 
-  /** Adds a new todo to the list of todos
-   * @param {Object} elements - required elements
-   * @param {String} elements.value - new todo value
-   * @param {String} elements.class_list - new css classes for the todo
-   * @param {String} elements.value_class_list - new css classes for the element containing the value of the todo
-   * @param {String} elements.btn_check_class_list - new css classes for the button that sets the todo as completed
-   * @param {String} elements.btn_edit_class_list - new css classes for the button that allows editing the todo
-   * @param {String} elements.btn_delete_class_list - new css classes for the button that deletes the todo
+  /** Adds a new to-do to the list of to-dos.
+   * @param {Object} options - Configuration options for the function.
+   * @param {String} options.value - New to-do value.
+   * @param {String} options.class_list - New css classes for the to-do.
+   * @param {String} options.value_class_list - New css classes for the element containing the value of the to-do.
+   * @param {String} options.btn_check_class_list - New css classes for the button that sets the to-do as completed.
+   * @param {String} options.btn_edit_class_list - New css classes for the button that allows editing the to-do.
+   * @param {String} options.btn_delete_class_list - New css classes for the button that deletes the to-do.
    * @returns {void}
    * @example
    * const new_todo = {
@@ -198,11 +224,11 @@ function useTodo({ target, utils, popups }) {
     }
   }
 
-  /** Sets a todo as editable
-   * @param {Object} elements - required elements
-   * @param {HTMLElement} elements.todo - The todo
-   * @param {HTMLElement} elements.todo_value - Contains the value of the todo
-   * @param {HTMLElement} elements.btn_edit - button that allows the todo to be edited
+  /** Sets a to-do as editable
+   * @param {Object} options - Configuration options for the function.
+   * @param {HTMLElement} options.todo - The to-do element.
+   * @param {HTMLElement} options.todo_value - Contains the value of the to-do.
+   * @param {HTMLElement} options.btn_edit - Button that allows the to-do to be edited.
    * @returns {void}
    *
    * @example
@@ -225,11 +251,11 @@ function useTodo({ target, utils, popups }) {
     btn_edit.addEventListener('click', () => UpdateTodo({ todo, todo_value, btn_edit }))
   }
 
-  /** Updates a todo value
-   * @param {Object} elements - required elements
-   * @param {HTMLElement} elements.todo - The todo
-   * @param {HTMLElement} elements.todo_value - Contains the value of the todo
-   * @param {HTMLElement} elements.btn_edit - button that allows the todo to be edited
+  /** Updates a to-do value.
+   * @param {Object} options - Configuration options for the function.
+   * @param {HTMLElement} options.todo - The to-do.
+   * @param {HTMLElement} options.todo_value - Contains the value of the to-do.
+   * @param {HTMLElement} options.btn_edit - button that allows the to-do to be edited.
    * @returns {void}
    *
    * @example
@@ -252,11 +278,11 @@ function useTodo({ target, utils, popups }) {
     btn_edit.addEventListener('click', () => EditTodo({ todo, todo_value, btn_edit }))
   }
 
-  /** Sets a todo as completed
-   * @param {Object} elements - required elements
-   * @param {HTMLElement} elements.todo - The todo
-   * @param {HTMLElement} elements.todo_value - Contains the value of the todo
-   * @param {HTMLElement} elements.btn_edit - button that allows the todo to be edited
+  /** Sets a to-do as completed.
+   * @param {Object} options - Configuration options for the function.
+   * @param {HTMLElement} options.todo - The to-do
+   * @param {HTMLElement} options.todo_value - Contains the value of the to-do.
+   * @param {HTMLElement} options.btn_edit - Button that allows the to-do to be edited.
    * @returns {void}
    *
    * @example
@@ -277,10 +303,10 @@ function useTodo({ target, utils, popups }) {
     UpdateTodo({ todo, todo_value, btn_edit })
   }
 
-  /** Deletes a todo
-   * @param {Object} elements - required elements
-   * @param {HTMLElement} elements.todo - The todo
-   * @param {HTMLElement} elements.todo_value - Contains the value of the todo
+  /** Deletes a to-do.
+   * @param {Object} options - Configuration options for the function.
+   * @param {HTMLElement} options.todo - The to-do.
+   * @param {HTMLElement} options.todo_value - Contains the value of the to-do.
    * @returns {void}
    *
    * @example
@@ -332,9 +358,9 @@ function useTodo({ target, utils, popups }) {
     }
   }
 
-  /** Checks if a todo already exist
-   * @param {todo} todo - required todo to be checked
-   * @returns {number} 1 if the todo exists, 0 if not
+  /** Checks if a to-do already exist.
+   * @param {todo} todo - Required to-do to be checked.
+   * @returns {number} 1 if the to-do exists, 0 if not.
    *
    * @example
    * const todo_exist = CheckIfTodoExist(todo)
@@ -356,6 +382,8 @@ function useTodo({ target, utils, popups }) {
   return { AddTodo, EditTodo, UpdateTodo, CompleteTodo, SaveProgressInLocalStorage, LoadTodos, CheckIfTodoExist }
 }
 
+utils.SetColorTheme()
+
 const todos = useTodo({ target: todo_list, utils: utils, popups })
 todos.LoadTodos()
 
@@ -366,17 +394,3 @@ btn_submit.addEventListener('click', (event) => {
 })
 
 btn_change_color_theme.addEventListener('click', () => utils.ChangeColorTheme())
-
-if (localStorage['color-theme'] == undefined) {
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    utils.SetDarkTheme()
-  } else {
-    utils.SetWhiteTheme()
-  }
-} else {
-  if (utils.CheckIfColorThemeIsBlack()) {
-    utils.SetDarkTheme()
-  } else {
-    utils.SetWhiteTheme()
-  }
-}
