@@ -9,58 +9,89 @@ const img_change_color_theme = document.querySelector("[data-image='change-color
 const is_dark_mode_active = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 const current_color_theme = localStorage['color-theme']
 let root = document.querySelector('html')
-const btn_change_language = document.querySelector("[data-translate='change-lang']")
+const select_languages = document.querySelector("[data-select='languages']")
 
-const translations = {
-  page_title: {
-    en: 'TO-DO Application',
-    es: 'Aplicación de Tareas',
-  },
-  save_progress: {
-    en: 'save progress',
-    es: 'guardar progreso',
-  },
-  todo_exist: {
-    en: 'This to-do already exist',
-    es: 'Esta tarea ya existe',
-  },
-  deleting_todo: {
-    en: 'Deleting to-do',
-    es: 'Eliminando tarea',
-  },
-  progress_saved: {
-    en: 'Progress saved successfully',
-    es: 'Progreso guardado con éxito',
-  },
-  add_todo: {
-    en: 'Add a new to-do',
-    es: 'Agrega una nueva tarea',
-  },
-  confirm: {
-    en: 'Confirm',
-    es: 'Confirmar',
-  },
-  cancel: {
-    en: 'Cancel',
-    es: 'Cancelar',
-  },
+/** Manages internationalization.
+ * @module useInternationalization
+ * @returns {Object} An object containing internationalization functionality.
+ */
+function useInternationalization({ utils }) {
+  const languages = [
+    { locale: 'en', value: 'English', icon: '🇺🇸' },
+    { locale: 'es', value: 'Español', icon: '🇪🇸' },
+  ]
+
+  const translations = {
+    page_title: {
+      en: 'TO-DO Application',
+      es: 'Aplicación de Tareas',
+    },
+    save_progress: {
+      en: 'save progress',
+      es: 'guardar progreso',
+    },
+    todo_exist: {
+      en: 'This to-do already exist',
+      es: 'Esta tarea ya existe',
+    },
+    deleting_todo: {
+      en: 'Deleting to-do',
+      es: 'Eliminando tarea',
+    },
+    progress_saved: {
+      en: 'Progress saved successfully',
+      es: 'Progreso guardado con éxito',
+    },
+    add_todo: {
+      en: 'Add a new to-do',
+      es: 'Agrega una nueva tarea',
+    },
+    confirm: {
+      en: 'Confirm',
+      es: 'Confirmar',
+    },
+    cancel: {
+      en: 'Cancel',
+      es: 'Cancelar',
+    },
+  }
+
+  function Translate() {
+    let root = document.querySelector('html')
+    const page_title = document.querySelector("[data-translate='page-title']")
+    const save_progress = document.querySelector("[data-translate='save-progress']")
+
+    page_title.innerText = translations.page_title[root.lang]
+    save_progress.innerText = translations.save_progress[root.lang]
+    input.placeholder = translations.add_todo[root.lang]
+  }
+
+  function ChangeLanguage(lang) {
+    let root = document.querySelector('html')
+    root.lang = lang
+    Translate()
+    todos.LoadTodos()
+  }
+
+  function GenerateLanguageControls(target) {
+    languages.forEach((lang) => {
+      const option = document.createElement('option')
+
+      option.value = lang.locale
+      option.innerText = `${lang.value} ${lang.icon}`
+
+      target.appendChild(option)
+    })
+
+    target.addEventListener('change', () => ChangeLanguage(target.value))
+  }
+
+  return { translations, languages, Translate, ChangeLanguage, GenerateLanguageControls }
 }
 
 if (localStorage['lang'] != undefined) {
   document.querySelector('html').lang = localStorage['lang']
 }
-
-function Translate() {
-  let root = document.querySelector('html')
-  const page_title = document.querySelector("[data-translate='page-title']")
-  const save_progress = document.querySelector("[data-translate='save-progress']")
-
-  page_title.innerText = translations.page_title[root.lang]
-  save_progress.innerText = translations.save_progress[root.lang]
-  input.placeholder = translations.add_todo[root.lang]
-}
-
-btn_change_language.addEventListener('click', () => ChangeLanguage())
 
 const utils = {
   ChangeColorTheme() {
@@ -129,8 +160,8 @@ const popups = {
     const description = document.createElement('h3')
     const icon = document.createElement('img')
     const btn_group = document.createElement('div')
-    const btn_confirm = utils.CreateTextBtn(translations.confirm[root.lang])
-    const btn_cancel = utils.CreateTextBtn(translations.cancel[root.lang])
+    const btn_confirm = utils.CreateTextBtn(internationalization.translations.confirm[root.lang])
+    const btn_cancel = utils.CreateTextBtn(internationalization.translations.cancel[root.lang])
 
     dialog.classList.add(css_classes, 'dialog', 'fade-in')
 
@@ -210,7 +241,8 @@ const popups = {
  * @param {Object} options.popups - Popup-related functions used by the module.
  * @returns {Object} An object containing functions to interact with the to-do list.
  */
-function useTodo({ target, utils, popups }) {
+function useTodo({ target, utils, popups, internationalization }) {
+  const translations = internationalization.translations
   btn_save.addEventListener('click', () => SaveProgressInLocalStorage())
 
   /** Adds a new to-do to the list of to-dos.
@@ -444,20 +476,16 @@ function useTodo({ target, utils, popups }) {
 
 utils.SetColorTheme()
 
-const todos = useTodo({ target: todo_list, utils: utils, popups })
+const internationalization = useInternationalization({ utils })
+// internationalization.GenerateLanguageControls(select_languages)
+
+const todos = useTodo({ target: todo_list, utils, popups, internationalization })
 todos.LoadTodos()
 
 btn_submit.addEventListener('click', (event) => {
   event.preventDefault()
   if (input.value) todos.AddTodo({ value: input.value })
-  else popups.CreateNotificationWithIcon(translations.add_todo[root.lang], '/icons/ZondiconsInformationOutlineInform.svg', 'inform icon', 'inform-notification')
+  else popups.CreateNotificationWithIcon(internationalization.translations.add_todo[root.lang], '/icons/ZondiconsInformationOutlineInform.svg', 'inform icon', 'inform-notification')
 })
 
 btn_change_color_theme.addEventListener('click', () => utils.ChangeColorTheme())
-
-function ChangeLanguage() {
-  let root = document.querySelector('html')
-  root.lang = root.lang == 'en' ? 'es' : 'en'
-  Translate()
-  todos.LoadTodos()
-}

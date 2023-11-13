@@ -71,6 +71,10 @@ header #page-controls {
   gap: 1rem;
 }
 
+button {
+  cursor: pointer;
+}
+
 form {
   display: flex;
   align-items: center !important;
@@ -92,6 +96,7 @@ ol {
   border: none;
   background-color: transparent;
   border-bottom: 0.2rem solid var(--background-color-save);
+  border-radius: 0% 0% 4% 4%;
   margin-top: 0.8rem;
   color: var(--font-color-base);
 }
@@ -114,6 +119,51 @@ ol {
 
 #btn-change-color-theme img {
   transform: scale(1.02);
+}
+
+#select-languages {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  position: relative;
+  border-radius: 50%;
+  margin-top: 0.4rem;
+}
+
+#btn-default-language {
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+}
+
+#select-languages-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  position: absolute;
+  top: 2.6rem;
+  z-index: 1;
+  background-color: var(--background-color-base);
+  display: none;
+}
+
+#select-languages-options .lang-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  border: none;
+  border-bottom: 0.2rem solid var(--font-color-base);
+  border-radius: 4% 4% 4% 4%;
+  padding: 0.3rem 0rem 0.3rem 0.4rem;
+  background-color: var(--background-color-base);
+  color: var(--font-color-base);
+}
+
+#select-languages-options .lang-option span {
+  font-weight: bold;
+  padding-top: 0.2rem;
 }
 
 #input-todo {
@@ -180,6 +230,10 @@ ol {
 
 .icon-btn img {
   border: none;
+}
+
+.select-language-active {
+  display: flex !important;
 }
 
 .is-checked {
@@ -334,6 +388,10 @@ ol {
   #btn-change-color-theme img:hover {
     transform: scale(1.12);
     cursor: pointer;
+  }
+
+  #select-languages-options button:hover {
+    border-bottom: 0.2rem solid var(--primary-green);
   }
 
   .todo:hover {

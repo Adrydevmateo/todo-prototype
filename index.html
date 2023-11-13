@@ -13,14 +13,32 @@
   <body>
     <header>
       <h1 data-translate="page-title">TO-DO Application</h1>
-      <button data-translate="change-lang">Click</button>
-      <div id="page-controls">
+      <div id="page-controls" data-page="controls">
         <button id="btn-save-progress" class="btn" data-btn="save-progress" type="button">
           <span data-translate="save-progress">Save Progress</span>
         </button>
         <button id="btn-change-color-theme" data-btn="change-color-theme" type="button">
           <img src="/icons/SolarMoonBold.svg" alt="Change color theme button" data-image="change-color-theme" />
         </button>
+        <!-- #region Select languages -->
+        <div id="select-languages" data-select="languages">
+          <button id="btn-default-language" type="button">
+            <img src="/icons/country_flags/EmojioneFlagForUnitedStates.svg" alt="usa flag" />
+          </button>
+          <!-- #region Language options -->
+          <div id="select-languages-options">
+            <button type="button" class="lang-option">
+              <span>English</span>
+              <img src="/icons/country_flags/EmojioneFlagForUnitedStates.svg" alt="usa flag" />
+            </button>
+            <button type="button" class="lang-option">
+              <span>Español</span>
+              <img src="/icons/country_flags/EmojioneFlagForSpain.svg" alt="usa flag" />
+            </button>
+          </div>
+          <!-- #endregion Language options -->
+        </div>
+        <!-- #endregion Select languages -->
       </div>
     </header>
     <main>
