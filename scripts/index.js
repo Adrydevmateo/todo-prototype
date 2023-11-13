@@ -9,16 +9,20 @@ const img_change_color_theme = document.querySelector("[data-image='change-color
 const is_dark_mode_active = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 const current_color_theme = localStorage['color-theme']
 let root = document.querySelector('html')
-const select_languages = document.querySelector("[data-select='languages']")
+const language_options = document.querySelector("[data-group='language-options']")
+const select_language = document.querySelector("[data-select='language']")
 
 /** Manages internationalization.
  * @module useInternationalization
  * @returns {Object} An object containing internationalization functionality.
  */
 function useInternationalization({ utils }) {
+  const current_language = document.querySelector("[data-image='current-language']")
+  select_language.addEventListener('click', () => ActivateLanguageSelection(language_options))
+
   const languages = [
-    { locale: 'en', value: 'English', icon: '🇺🇸' },
-    { locale: 'es', value: 'Español', icon: '🇪🇸' },
+    { locale: 'en', value: 'English', icon: 'EmojioneFlagForUnitedStates.svg', alt: 'usd flag' },
+    { locale: 'es', value: 'Español', icon: 'EmojioneFlagForSpain.svg', alt: 'spain flag' },
   ]
 
   const translations = {
@@ -73,20 +77,46 @@ function useInternationalization({ utils }) {
     todos.LoadTodos()
   }
 
-  function GenerateLanguageControls(target) {
+  function GenerateLanguageOptions(target) {
     languages.forEach((lang) => {
-      const option = document.createElement('option')
+      const option = CreateBtnLanguageOption(lang.value, lang.icon, lang.alt)
 
-      option.value = lang.locale
-      option.innerText = `${lang.value} ${lang.icon}`
+      option.addEventListener('click', () => {
+        ChangeCurrentLanguageIcon(current_language, lang.icon)
+        ChangeLanguage(lang.locale)
+        ActivateLanguageSelection(language_options)
+      })
 
       target.appendChild(option)
     })
-
-    target.addEventListener('change', () => ChangeLanguage(target.value))
   }
 
-  return { translations, languages, Translate, ChangeLanguage, GenerateLanguageControls }
+  function CreateBtnLanguageOption(txt, icon, alt) {
+    const btn = utils.CreateBtn()
+    const span = document.createElement('span')
+    const img = document.createElement('img')
+
+    span.innerText = txt
+    img.src = `/icons/country_flags/${icon}`
+    img.alt = alt
+
+    btn.classList.add('lang-option')
+
+    btn.appendChild(span)
+    btn.appendChild(img)
+
+    return btn
+  }
+
+  function ActivateLanguageSelection(target) {
+    target.classList.toggle('select-language-active')
+  }
+
+  function ChangeCurrentLanguageIcon(target, icon) {
+    target.src = `/icons/country_flags/${icon}`
+  }
+
+  return { translations, languages, Translate, ChangeLanguage, GenerateLanguageOptions }
 }
 
 if (localStorage['lang'] != undefined) {
@@ -477,7 +507,7 @@ function useTodo({ target, utils, popups, internationalization }) {
 utils.SetColorTheme()
 
 const internationalization = useInternationalization({ utils })
-// internationalization.GenerateLanguageControls(select_languages)
+internationalization.GenerateLanguageOptions(language_options)
 
 const todos = useTodo({ target: todo_list, utils, popups, internationalization })
 todos.LoadTodos()
