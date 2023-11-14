@@ -1,4 +1,5 @@
 'use strict'
+const root = document.querySelector('html')
 const header = document.querySelector('header')
 const todo_list = document.querySelector("[data-list='todos']")
 const input = document.querySelector("[data-input='todo']")
@@ -8,17 +9,18 @@ const btn_change_color_theme = document.querySelector("[data-btn='change-color-t
 const img_change_color_theme = document.querySelector("[data-image='change-color-theme']")
 const is_dark_mode_active = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 const current_color_theme = localStorage['color-theme']
-let root = document.querySelector('html')
-const language_options = document.querySelector("[data-group='language-options']")
-const select_language = document.querySelector("[data-select='language']")
 
-/** Manages internationalization.
+/** Module for handling internationalization.
  * @module useInternationalization
- * @returns {Object} An object containing internationalization functionality.
+ * @param {Object} options - Configuration options for the module.
+ * @param {Object} options.utils - Utility functions to be used by the module.
+ * @returns {Object} - An object containing functions and data related to internationalization.
  */
 function useInternationalization({ utils }) {
+  const root = document.querySelector('html')
   const current_language = document.querySelector("[data-image='current-language']")
-  select_language.addEventListener('click', () => ActivateLanguageSelection(language_options))
+  const language_options = document.querySelector("[data-group='language-options']")
+  const select_language = document.querySelector("[data-select='language']")
 
   const languages = {
     en: {
@@ -69,7 +71,6 @@ function useInternationalization({ utils }) {
   }
 
   function Translate() {
-    let root = document.querySelector('html')
     const page_title = document.querySelector("[data-translate='page-title']")
     const save_progress = document.querySelector("[data-translate='save-progress']")
 
@@ -79,29 +80,34 @@ function useInternationalization({ utils }) {
   }
 
   function ChangeLanguage(lang) {
-    let root = document.querySelector('html')
     root.lang = lang
-    ChangeCurrentLanguageIcon(current_language, root.lang)
+    ChangeCurrentLanguageIcon(lang)
     Translate()
     todos.LoadTodos()
-    localStorage['lang'] = root.lang
+    localStorage['lang'] = lang
   }
 
-  function GenerateLanguageOptions(target) {
+  function GenerateLanguageOptions() {
     for (const item in languages) {
       const lang = languages[item]
       const option = CreateBtnLanguageOption(lang.value, lang.icon, lang.alt)
 
       option.addEventListener('click', () => {
-        ChangeCurrentLanguageIcon(current_language, item)
+        ChangeCurrentLanguageIcon(item)
         ChangeLanguage(item)
-        ActivateLanguageSelection(language_options)
+        ActivateLanguageSelection()
       })
 
-      target.appendChild(option)
+      language_options.appendChild(option)
     }
   }
 
+  /** Create a button element for language selection.
+   * @param {string} txt - The text content of the button.
+   * @param {string} icon - The url of the language flag icon.
+   * @param {string} alt - The alt text for the language flag.
+   * @returns {HTMLElement} - The created button element.
+   */
   function CreateBtnLanguageOption(txt, icon, alt) {
     const btn = utils.CreateBtn()
     const span = document.createElement('span')
@@ -119,12 +125,12 @@ function useInternationalization({ utils }) {
     return btn
   }
 
-  function ActivateLanguageSelection(target) {
-    target.classList.toggle('select-language-active')
+  function ActivateLanguageSelection() {
+    language_options.classList.toggle('select-language-active')
   }
 
-  function ChangeCurrentLanguageIcon(target, lang) {
-    target.src = `/icons/country_flags/${languages[lang].icon}`
+  function ChangeCurrentLanguageIcon(lang) {
+    current_language.src = `/icons/country_flags/${languages[lang].icon}`
   }
 
   function SetDefaultLanguage() {
@@ -137,6 +143,8 @@ function useInternationalization({ utils }) {
       ChangeLanguage(default_language)
     }
   }
+
+  select_language.addEventListener('click', () => ActivateLanguageSelection())
 
   return { translations, languages, Translate, ChangeLanguage, GenerateLanguageOptions, SetDefaultLanguage }
 }
@@ -291,7 +299,14 @@ const popups = {
  */
 function useTodo({ target, utils, popups, internationalization }) {
   const translations = internationalization.translations
+  const btn_all_todos = document.querySelector("[data-btn='all-todos']")
+  const btn_completed_todos = document.querySelector("[data-btn='completed-todos']")
+  const btn_incomplete_todos = document.querySelector("[data-btn='incomplete-todos']")
+
   btn_save.addEventListener('click', () => SaveProgressInLocalStorage())
+  btn_all_todos.addEventListener('click', () => LoadTodos())
+  btn_completed_todos.addEventListener('click', () => LoadCompletedTodos('is-checked'))
+  btn_incomplete_todos.addEventListener('click', () => LoadIncompleteTodos('is-checked'))
 
   /** Adds a new to-do to the list of to-dos.
    * @param {Object} options - Configuration options for the function.
@@ -492,6 +507,46 @@ function useTodo({ target, utils, popups, internationalization }) {
     }
   }
 
+  function LoadCompletedTodos(completed) {
+    DeleteAllTodos()
+    const todos = localStorage[`todos_${root.lang}`]
+    if (todos) {
+      const collection = Array.from(JSON.parse(todos))
+      collection.forEach((todo) => {
+        if (todo.todo_class_list.includes(completed)) {
+          AddTodo({
+            value: todo.todo_value,
+            class_list: todo.todo_class_list,
+            value_class_list: todo.todo_value_class_list,
+            btn_check_class_list: todo.btn_check_class_list,
+            btn_edit_class_list: todo.btn_edit_class_list,
+            btn_delete_class_list: todo.btn_delete_class_list,
+          })
+        }
+      })
+    }
+  }
+
+  function LoadIncompleteTodos(complete) {
+    DeleteAllTodos()
+    const todos = localStorage[`todos_${root.lang}`]
+    if (todos) {
+      const collection = Array.from(JSON.parse(todos))
+      collection.forEach((todo) => {
+        if (!todo.todo_class_list.includes(complete)) {
+          AddTodo({
+            value: todo.todo_value,
+            class_list: todo.todo_class_list,
+            value_class_list: todo.todo_value_class_list,
+            btn_check_class_list: todo.btn_check_class_list,
+            btn_edit_class_list: todo.btn_edit_class_list,
+            btn_delete_class_list: todo.btn_delete_class_list,
+          })
+        }
+      })
+    }
+  }
+
   function DeleteAllTodos() {
     while (target.firstChild) {
       target.removeChild(target.firstChild)
@@ -519,14 +574,14 @@ function useTodo({ target, utils, popups, internationalization }) {
     return 0
   }
 
-  return { AddTodo, EditTodo, UpdateTodo, CompleteTodo, SaveProgressInLocalStorage, LoadTodos, CheckIfTodoExist }
+  return { AddTodo, EditTodo, UpdateTodo, CompleteTodo, SaveProgressInLocalStorage, LoadTodos, LoadCompletedTodos, LoadIncompleteTodos, CheckIfTodoExist }
 }
 
 utils.SetColorTheme()
 const internationalization = useInternationalization({ utils })
 const todos = useTodo({ target: todo_list, utils, popups, internationalization })
 
-internationalization.GenerateLanguageOptions(language_options)
+internationalization.GenerateLanguageOptions()
 internationalization.SetDefaultLanguage()
 
 todos.LoadTodos()
