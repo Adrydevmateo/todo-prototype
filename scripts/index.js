@@ -20,10 +20,18 @@ function useInternationalization({ utils }) {
   const current_language = document.querySelector("[data-image='current-language']")
   select_language.addEventListener('click', () => ActivateLanguageSelection(language_options))
 
-  const languages = [
-    { locale: 'en', value: 'English', icon: 'EmojioneFlagForUnitedStates.svg', alt: 'usd flag' },
-    { locale: 'es', value: 'Español', icon: 'EmojioneFlagForSpain.svg', alt: 'spain flag' },
-  ]
+  const languages = {
+    en: {
+      value: 'English',
+      icon: 'EmojioneFlagForUnitedStates.svg',
+      alt: 'usd flag',
+    },
+    es: {
+      value: 'Español',
+      icon: 'EmojioneFlagForSpain.svg',
+      alt: 'spain flag',
+    },
+  }
 
   const translations = {
     page_title: {
@@ -73,22 +81,25 @@ function useInternationalization({ utils }) {
   function ChangeLanguage(lang) {
     let root = document.querySelector('html')
     root.lang = lang
+    ChangeCurrentLanguageIcon(current_language, root.lang)
     Translate()
     todos.LoadTodos()
+    localStorage['lang'] = root.lang
   }
 
   function GenerateLanguageOptions(target) {
-    languages.forEach((lang) => {
+    for (const item in languages) {
+      const lang = languages[item]
       const option = CreateBtnLanguageOption(lang.value, lang.icon, lang.alt)
 
       option.addEventListener('click', () => {
-        ChangeCurrentLanguageIcon(current_language, lang.icon)
-        ChangeLanguage(lang.locale)
+        ChangeCurrentLanguageIcon(current_language, item)
+        ChangeLanguage(item)
         ActivateLanguageSelection(language_options)
       })
 
       target.appendChild(option)
-    })
+    }
   }
 
   function CreateBtnLanguageOption(txt, icon, alt) {
@@ -112,15 +123,22 @@ function useInternationalization({ utils }) {
     target.classList.toggle('select-language-active')
   }
 
-  function ChangeCurrentLanguageIcon(target, icon) {
-    target.src = `/icons/country_flags/${icon}`
+  function ChangeCurrentLanguageIcon(target, lang) {
+    target.src = `/icons/country_flags/${languages[lang].icon}`
   }
 
-  return { translations, languages, Translate, ChangeLanguage, GenerateLanguageOptions }
-}
+  function SetDefaultLanguage() {
+    if (localStorage['lang'] != undefined) {
+      root.lang = localStorage['lang']
+      ChangeLanguage(root.lang)
+    } else {
+      const browser_language = navigator.language || navigator.userLanguage
+      const default_language = browser_language.split('-')[0]
+      ChangeLanguage(default_language)
+    }
+  }
 
-if (localStorage['lang'] != undefined) {
-  document.querySelector('html').lang = localStorage['lang']
+  return { translations, languages, Translate, ChangeLanguage, GenerateLanguageOptions, SetDefaultLanguage }
 }
 
 const utils = {
@@ -505,11 +523,12 @@ function useTodo({ target, utils, popups, internationalization }) {
 }
 
 utils.SetColorTheme()
-
 const internationalization = useInternationalization({ utils })
-internationalization.GenerateLanguageOptions(language_options)
-
 const todos = useTodo({ target: todo_list, utils, popups, internationalization })
+
+internationalization.GenerateLanguageOptions(language_options)
+internationalization.SetDefaultLanguage()
+
 todos.LoadTodos()
 
 btn_submit.addEventListener('click', (event) => {
