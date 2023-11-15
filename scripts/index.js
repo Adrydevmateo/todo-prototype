@@ -134,7 +134,7 @@ function useInternationalization({ utils }) {
     const img = document.createElement('img')
 
     span.innerText = txt
-    img.src = `/icons/country_flags/${icon}`
+    img.src = `${utils.ICONS}${icon}`
     img.alt = alt
 
     btn.classList.add('lang-option')
@@ -150,7 +150,7 @@ function useInternationalization({ utils }) {
   }
 
   function ChangeCurrentLanguageIcon(lang) {
-    current_language.src = `/icons/country_flags/${languages[lang].icon}`
+    current_language.src = `${utils.ICONS}${languages[lang].icon}`
   }
 
   function SetDefaultLanguage() {
@@ -170,6 +170,7 @@ function useInternationalization({ utils }) {
 }
 
 const utils = {
+  ICONS: '/icons/country_flags/',
   ChangeColorTheme() {
     if (this.CheckIfColorThemeIsBlack()) this.SetWhiteTheme()
     else this.SetDarkTheme()
@@ -219,6 +220,10 @@ const utils = {
 }
 
 const popups = {
+  TITLE_ICON: 'icon-title-box',
+  INFORMATION_ERROR_ICON: '/icons/ZondiconsInformationOutlineError.svg',
+  INFORMATION_SUCCESS_ICON: '/icons/ZondiconsInformationOutlineSuccess.svg',
+
   /** Creates a dialog that allows you to confirm or cancel an action.
    * @param {String} new_title - Dialog title.
    * @param {String} new_icon - Url of the icon.
@@ -241,7 +246,7 @@ const popups = {
 
     dialog.classList.add(css_classes, 'dialog', 'fade-in')
 
-    title_box.classList.add('icon-title-box')
+    title_box.classList.add(this.TITLE_ICON)
     title.classList.add('dialog-title')
 
     description.classList.add('dialog-msg')
@@ -289,7 +294,7 @@ const popups = {
     const icon = document.createElement('img')
 
     notification.classList.add(css_classes, 'notification', 'slide-from-top')
-    title_box.classList.add('icon-title-box')
+    title_box.classList.add(this.TITLE_ICON)
     msg.classList.add('notification-title')
 
     msg.innerText = new_msg
@@ -318,6 +323,16 @@ const popups = {
  * @returns {Object} An object containing functions to interact with the to-do list.
  */
 function useTodo({ target, utils, popups, internationalization }) {
+  const todo_state = {
+    CHECK: 'is-checked',
+    EDIT: 'is-editing',
+    BTN_CHECK: 'btn-check',
+    BTN_EDIT: 'btn-edit',
+    BTN_DELETE: 'btn-delete',
+    BTN_CONTROL: 'btn-control',
+    ICON_BTN: 'icon-btn',
+  }
+
   const translations = internationalization.translations
   const btn_all_todos = document.querySelector("[data-btn='all-todos']")
   const btn_completed_todos = document.querySelector("[data-btn='completed-todos']")
@@ -354,7 +369,7 @@ function useTodo({ target, utils, popups, internationalization }) {
    * @since 1.0.0
    */
   function AddTodo({ value, class_list, value_class_list, btn_check_class_list, btn_edit_class_list, btn_delete_class_list }) {
-    if (CheckIfTodoExist(value)) popups.CreateNotificationWithIcon('This to do already exist', '/icons/ZondiconsInformationOutlineError.svg', 'error icon', 'error-notification')
+    if (CheckIfTodoExist(value)) popups.CreateNotificationWithIcon('This to do already exist', popups.INFORMATION_ERROR_ICON, 'error icon', 'error-notification')
     else {
       const todo = document.createElement('li')
       const todo_value = document.createElement('p')
@@ -367,13 +382,13 @@ function useTodo({ target, utils, popups, internationalization }) {
       todo_value.innerText = value
 
       todo.classList = class_list ?? 'todo fade-in'
-      btn_check.classList = btn_check_class_list ?? 'btn-check btn-control icon-btn'
-      btn_edit.classList = btn_edit_class_list ?? 'btn-edit icon-btn'
-      btn_delete.classList = btn_delete_class_list ?? 'btn-delete btn-control icon-btn'
+      btn_check.classList = btn_check_class_list ?? `${todo_state.BTN_CHECK} ${todo_state.BTN_CONTROL} ${todo_state.ICON_BTN}`
+      btn_edit.classList = btn_edit_class_list ?? `${todo_state.BTN_EDIT} ${todo_state.ICON_BTN}`
+      btn_delete.classList = btn_delete_class_list ?? `${todo_state.BTN_DELETE} ${todo_state.BTN_CONTROL} ${todo_state.ICON_BTN}`
       todo_value.classList = value_class_list ?? 'no-outline'
 
-      todo.classList.remove('is-editing')
-      btn_edit.classList.remove('is-editing')
+      todo.classList.remove(todo_state.EDIT)
+      btn_edit.classList.remove(todo_state.EDIT)
 
       todo_value.spellcheck = true
 
@@ -414,8 +429,8 @@ function useTodo({ target, utils, popups, internationalization }) {
    */
   function EditTodo({ todo, todo_value, btn_edit }) {
     todo_value.contentEditable = 'true'
-    todo.classList.add('is-editing')
-    btn_edit.classList.add('is-editing')
+    todo.classList.add(todo_state.EDIT)
+    btn_edit.classList.add(todo_state.EDIT)
     btn_edit.addEventListener('click', () => UpdateTodo({ todo, todo_value, btn_edit }))
   }
 
@@ -441,8 +456,8 @@ function useTodo({ target, utils, popups, internationalization }) {
    */
   function UpdateTodo({ todo, todo_value, btn_edit }) {
     todo_value.contentEditable = 'false'
-    todo.classList.remove('is-editing')
-    btn_edit.classList.remove('is-editing')
+    todo.classList.remove(todo_state.EDIT)
+    btn_edit.classList.remove(todo_state.EDIT)
     btn_edit.addEventListener('click', () => EditTodo({ todo, todo_value, btn_edit }))
   }
 
@@ -467,7 +482,7 @@ function useTodo({ target, utils, popups, internationalization }) {
    * @since 1.0.0
    */
   function CompleteTodo({ todo, todo_value, btn_edit }) {
-    todo.classList.toggle('is-checked')
+    todo.classList.toggle(todo_state.CHECK)
     UpdateTodo({ todo, todo_value, btn_edit })
   }
 
@@ -490,7 +505,7 @@ function useTodo({ target, utils, popups, internationalization }) {
    * @since 1.0.0
    */
   function DeleteTodo({ todo, todo_value }) {
-    const { btn_confirm } = popups.CreateConfirmationDialog(translations.deleting_todo[root.lang], '/icons/ZondiconsInformationOutlineError.svg', 'error icon', 'warning-dialog', todo_value.innerText)
+    const { btn_confirm } = popups.CreateConfirmationDialog(translations.deleting_todo[root.lang], popups.INFORMATION_ERROR_ICON, 'error icon', 'warning-dialog', todo_value.innerText)
     btn_confirm.addEventListener('click', () => utils.DeleteDOMElement(todo))
   }
 
@@ -500,13 +515,13 @@ function useTodo({ target, utils, popups, internationalization }) {
       todo_class_list: item.classList.value,
       todo_value: item.querySelector('p').innerText,
       todo_value_class_list: item.querySelector('p').classList.value,
-      btn_check_class_list: item.querySelector('.btn-check').classList.value,
-      btn_edit_class_list: item.querySelector('.btn-edit').classList.value,
-      btn_delete_class_list: item.querySelector('.btn-delete').classList.value,
+      btn_check_class_list: item.querySelector(`.${todo_state.BTN_CHECK}`).classList.value,
+      btn_edit_class_list: item.querySelector(`.${todo_state.BTN_EDIT}`).classList.value,
+      btn_delete_class_list: item.querySelector(`.${todo_state.BTN_DELETE}`).classList.value,
     }))
     const json = JSON.stringify(new_collection)
     localStorage[`todos_${root.lang}`] = json
-    popups.CreateNotificationWithIcon(translations.progress_saved[root.lang], '/icons/ZondiconsInformationOutlineSuccess.svg', 'success icon', 'success-notification')
+    popups.CreateNotificationWithIcon(translations.progress_saved[root.lang], popups.INFORMATION_SUCCESS_ICON, 'success icon', 'success-notification')
   }
 
   function LoadTodos(completed = false, incomplete = false) {
@@ -533,14 +548,9 @@ function useTodo({ target, utils, popups, internationalization }) {
     })
   }
 
-  const FilterCompletedTodos = (todo) => (todo.todo_class_list.includes('is-checked') ? SetNewTodo(todo) : null)
-  const FilterTodosIncomplete = (todo) => (!todo.todo_class_list.includes('is-checked') ? SetNewTodo(todo) : null)
-
-  function DeleteAllTodos() {
-    while (target.firstChild) {
-      target.removeChild(target.firstChild)
-    }
-  }
+  const FilterCompletedTodos = (todo) => (todo.todo_class_list.includes(todo_state.CHECK) ? SetNewTodo(todo) : null)
+  const FilterTodosIncomplete = (todo) => (!todo.todo_class_list.includes(todo_state.CHECK) ? SetNewTodo(todo) : null)
+  const DeleteAllTodos = () => Array.from(target.children).forEach((element) => element.remove())
 
   /** Checks if a to-do already exist.
    * @param {todo} todo - Required to-do to be checked.
