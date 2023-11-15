@@ -92,22 +92,6 @@ ol {
 }
 
 /* Id selector start */
-#btn-save-progress {
-  border: none;
-  background-color: transparent;
-  border-bottom: 0.2rem solid var(--background-color-save);
-  border-radius: 0% 0% 4% 4%;
-  margin-top: 0.8rem;
-  color: var(--font-color-base);
-}
-
-#btn-save-progress span {
-  display: block;
-  padding-bottom: 0.4rem;
-  font-weight: var(--font-weight-basic);
-  font-size: 1rem;
-}
-
 #btn-change-color-theme {
   border: none;
   border-radius: 100%;
@@ -187,6 +171,13 @@ ol {
   box-shadow: var(--box-shadow-tuna);
   opacity: 0.8;
 }
+
+#todos-filters {
+  display: flex;
+  gap: 1rem;
+  justify-content: end;
+  margin: 2rem 0;
+}
 /* Id selector end */
 
 /* Class selector start */
@@ -203,6 +194,22 @@ ol {
 
 .dark-theme #input-todo:hover {
   opacity: 1;
+}
+
+.btn-underline {
+  border: none;
+  background-color: transparent;
+  border-bottom: 0.2rem solid var(--background-color-save);
+  border-radius: 0% 0% 4% 4%;
+  margin-top: 0.8rem;
+  color: var(--font-color-base);
+}
+
+.btn-underline span {
+  display: block;
+  padding-bottom: 0.4rem;
+  font-weight: var(--font-weight-basic);
+  font-size: 1rem;
 }
 
 /* Animation start */
@@ -381,7 +388,7 @@ ol {
     cursor: pointer;
   }
 
-  #btn-save-progress:hover {
+  .btn-underline:hover {
     transform: scale(1.1);
   }
 

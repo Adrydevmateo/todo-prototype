@@ -14,7 +14,7 @@
     <header>
       <h1 data-translate="page-title">TO-DO Application</h1>
       <div id="page-controls" data-page="controls">
-        <button id="btn-save-progress" class="btn" data-btn="save-progress" type="button">
+        <button class="btn-underline" data-btn="save-progress" type="button">
           <span data-translate="save-progress">Save Progress</span>
         </button>
         <button id="btn-change-color-theme" data-btn="change-color-theme" type="button">
@@ -40,10 +40,16 @@
         </button>
       </form>
 
-      <div>
-        <button type="button" data-btn="all-todos">All</button>
-        <button type="button" data-btn="completed-todos">Completed</button>
-        <button type="button" data-btn="incomplete-todos">Incomplete</button>
+      <div id="todos-filters">
+        <button class="btn-underline" data-btn="all-todos" type="button">
+          <span data-translate="all-todos">All</span>
+        </button>
+        <button class="btn-underline" data-btn="completed-todos" type="button">
+          <span data-translate="completed-todos">Completed</span>
+        </button>
+        <button class="btn-underline" data-btn="incomplete-todos" type="button">
+          <span data-translate="incomplete-todos">Incomplete</span>
+        </button>
       </div>
 
       <ol data-list="todos"></ol>
