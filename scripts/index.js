@@ -323,8 +323,8 @@ function useTodo({ target, utils, popups, internationalization }) {
 
   btn_save.addEventListener('click', () => SaveProgressInLocalStorage())
   btn_all_todos.addEventListener('click', () => LoadTodos())
-  btn_completed_todos.addEventListener('click', () => LoadCompletedTodos('is-checked'))
-  btn_incomplete_todos.addEventListener('click', () => LoadIncompleteTodos('is-checked'))
+  btn_completed_todos.addEventListener('click', () => LoadTodos(true))
+  btn_incomplete_todos.addEventListener('click', () => LoadTodos(false, true))
 
   /** Adds a new to-do to the list of to-dos.
    * @param {Object} options - Configuration options for the function.
@@ -507,63 +507,32 @@ function useTodo({ target, utils, popups, internationalization }) {
     popups.CreateNotificationWithIcon(translations.progress_saved[root.lang], '/icons/ZondiconsInformationOutlineSuccess.svg', 'success icon', 'success-notification')
   }
 
-  function LoadTodos() {
+  function LoadTodos(completed = false, incomplete = false) {
     DeleteAllTodos()
     const todos = localStorage[`todos_${root.lang}`]
     if (todos) {
       const collection = Array.from(JSON.parse(todos))
       collection.forEach((todo) => {
-        AddTodo({
-          value: todo.todo_value,
-          class_list: todo.todo_class_list,
-          value_class_list: todo.todo_value_class_list,
-          btn_check_class_list: todo.btn_check_class_list,
-          btn_edit_class_list: todo.btn_edit_class_list,
-          btn_delete_class_list: todo.btn_delete_class_list,
-        })
+        if (completed) FilterCompletedTodos(todo)
+        else if (incomplete) FilterTodosIncomplete(todo)
+        else SetNewTodo(todo)
       })
     }
   }
 
-  function LoadCompletedTodos(completed) {
-    DeleteAllTodos()
-    const todos = localStorage[`todos_${root.lang}`]
-    if (todos) {
-      const collection = Array.from(JSON.parse(todos))
-      collection.forEach((todo) => {
-        if (todo.todo_class_list.includes(completed)) {
-          AddTodo({
-            value: todo.todo_value,
-            class_list: todo.todo_class_list,
-            value_class_list: todo.todo_value_class_list,
-            btn_check_class_list: todo.btn_check_class_list,
-            btn_edit_class_list: todo.btn_edit_class_list,
-            btn_delete_class_list: todo.btn_delete_class_list,
-          })
-        }
-      })
-    }
+  function SetNewTodo(todo) {
+    AddTodo({
+      value: todo.todo_value,
+      class_list: todo.todo_class_list,
+      value_class_list: todo.todo_value_class_list,
+      btn_check_class_list: todo.btn_check_class_list,
+      btn_edit_class_list: todo.btn_edit_class_list,
+      btn_delete_class_list: todo.btn_delete_class_list,
+    })
   }
 
-  function LoadIncompleteTodos(complete) {
-    DeleteAllTodos()
-    const todos = localStorage[`todos_${root.lang}`]
-    if (todos) {
-      const collection = Array.from(JSON.parse(todos))
-      collection.forEach((todo) => {
-        if (!todo.todo_class_list.includes(complete)) {
-          AddTodo({
-            value: todo.todo_value,
-            class_list: todo.todo_class_list,
-            value_class_list: todo.todo_value_class_list,
-            btn_check_class_list: todo.btn_check_class_list,
-            btn_edit_class_list: todo.btn_edit_class_list,
-            btn_delete_class_list: todo.btn_delete_class_list,
-          })
-        }
-      })
-    }
-  }
+  const FilterCompletedTodos = (todo) => (todo.todo_class_list.includes('is-checked') ? SetNewTodo(todo) : null)
+  const FilterTodosIncomplete = (todo) => (!todo.todo_class_list.includes('is-checked') ? SetNewTodo(todo) : null)
 
   function DeleteAllTodos() {
     while (target.firstChild) {
@@ -592,7 +561,7 @@ function useTodo({ target, utils, popups, internationalization }) {
     return 0
   }
 
-  return { AddTodo, EditTodo, UpdateTodo, CompleteTodo, SaveProgressInLocalStorage, LoadTodos, LoadCompletedTodos, LoadIncompleteTodos, CheckIfTodoExist }
+  return { AddTodo, EditTodo, UpdateTodo, CompleteTodo, SaveProgressInLocalStorage, LoadTodos, CheckIfTodoExist }
 }
 
 utils.SetColorTheme()
