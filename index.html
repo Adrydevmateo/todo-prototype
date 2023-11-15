@@ -14,32 +14,40 @@
     <header>
       <h1 data-translate="page-title">TO-DO Application</h1>
       <div id="page-controls" data-page="controls">
+        <!-- #region Save progress button -->
         <button class="btn-underline" data-btn="save-progress" type="button">
           <span data-translate="save-progress">Save Progress</span>
         </button>
+        <!-- #endregion Save progress button -->
+
+        <!-- #region Color theme switcher -->
         <button id="btn-change-color-theme" data-btn="change-color-theme" type="button">
           <img src="/icons/SolarMoonBold.svg" alt="Change color theme button" data-image="change-color-theme" />
         </button>
-        <!-- #region Select languages -->
+        <!-- #endregion Color theme switcher -->
+
+        <!-- #region Select language -->
         <div id="select-languages">
           <button id="btn-default-language" type="button" data-select="language">
             <img src="/icons/country_flags/EmojioneFlagForUnitedStates.svg" alt="usa flag" data-image="current-language" />
           </button>
-          <!-- #region Language options -->
+
           <div id="select-languages-options" data-group="language-options"></div>
-          <!-- #endregion Language options -->
         </div>
-        <!-- #endregion Select languages -->
+        <!-- #endregion Select language -->
       </div>
     </header>
     <main>
+      <!-- #region Todos formulary -->
       <form data-form="todo">
         <input type="text" name="todo" id="input-todo" data-input="todo" spellcheck="true" placeholder="Add a new to do" />
         <button id="submit-btn" data-btn="submit" type="submit">
           <img src="/icons/ZondiconsAddOutline.svg" alt="Add todo button" />
         </button>
       </form>
+      <!-- #region Todos formulary -->
 
+      <!-- #region Filter todos -->
       <div id="todos-filters">
         <button class="btn-underline" data-btn="all-todos" type="button">
           <span data-translate="all-todos">All</span>
@@ -51,8 +59,11 @@
           <span data-translate="incomplete-todos">Incomplete</span>
         </button>
       </div>
+      <!-- #endregion Filter todos -->
 
+      <!-- #region List of todos -->
       <ol data-list="todos"></ol>
+      <!-- #endregion List of todos -->
     </main>
   </body>
 </html>

@@ -83,12 +83,14 @@ function useInternationalization({ utils }) {
   }
 
   function Translate() {
+    const site_title = document.querySelector('title')
     const page_title = document.querySelector("[data-translate='page-title']")
     const save_progress = document.querySelector("[data-translate='save-progress']")
     const btn_all_todos = document.querySelector("[data-translate='all-todos']")
     const btn_completed_todos = document.querySelector("[data-translate='completed-todos']")
     const btn_incomplete_todos = document.querySelector("[data-translate='incomplete-todos']")
 
+    site_title.innerText = translations.page_title[root.lang]
     page_title.innerText = translations.page_title[root.lang]
     save_progress.innerText = translations.save_progress[root.lang]
     input.placeholder = translations.add_todo[root.lang]
