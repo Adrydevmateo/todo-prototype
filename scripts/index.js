@@ -68,15 +68,33 @@ function useInternationalization({ utils }) {
       en: 'Cancel',
       es: 'Cancelar',
     },
+    all_todos: {
+      en: 'All',
+      es: 'Todas',
+    },
+    completed_todos: {
+      en: 'Completed',
+      es: 'Completadas',
+    },
+    incomplete_todos: {
+      en: 'Incomplete',
+      es: 'Incompletas',
+    },
   }
 
   function Translate() {
     const page_title = document.querySelector("[data-translate='page-title']")
     const save_progress = document.querySelector("[data-translate='save-progress']")
+    const btn_all_todos = document.querySelector("[data-translate='all-todos']")
+    const btn_completed_todos = document.querySelector("[data-translate='completed-todos']")
+    const btn_incomplete_todos = document.querySelector("[data-translate='incomplete-todos']")
 
     page_title.innerText = translations.page_title[root.lang]
     save_progress.innerText = translations.save_progress[root.lang]
     input.placeholder = translations.add_todo[root.lang]
+    btn_all_todos.innerText = translations.all_todos[root.lang]
+    btn_completed_todos.innerText = translations.completed_todos[root.lang]
+    btn_incomplete_todos.innerText = translations.incomplete_todos[root.lang]
   }
 
   function ChangeLanguage(lang) {

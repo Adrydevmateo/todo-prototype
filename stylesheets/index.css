@@ -119,6 +119,12 @@ ol {
   border-radius: 50%;
   border: none;
   display: flex;
+  width: 74%;
+  margin: 0.4rem 0.2rem 0 0;
+}
+
+#btn-default-language img {
+  width: 100%;
 }
 
 #select-languages-options {
@@ -210,6 +216,7 @@ ol {
   padding-bottom: 0.4rem;
   font-weight: var(--font-weight-basic);
   font-size: 1rem;
+  text-transform: capitalize;
 }
 
 /* Animation start */
