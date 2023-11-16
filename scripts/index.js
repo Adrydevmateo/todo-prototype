@@ -1,14 +1,154 @@
 'use strict'
 const root = document.querySelector('html')
-const header = document.querySelector('header')
 const todo_list = document.querySelector("[data-list='todos']")
 const input = document.querySelector("[data-input='todo']")
-const btn_save = document.querySelector("[data-btn='save-progress']")
-const btn_submit = document.querySelector("[data-btn='submit']")
 const btn_change_color_theme = document.querySelector("[data-btn='change-color-theme']")
-const img_change_color_theme = document.querySelector("[data-image='change-color-theme']")
-const is_dark_mode_active = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-const current_color_theme = localStorage['color-theme']
+
+const utils = {
+  img_change_color_theme: document.querySelector("[data-image='change-color-theme']"),
+  ICONS: '/icons/country_flags/',
+  ChangeColorTheme() {
+    if (this.CheckIfColorThemeIsBlack()) this.SetWhiteTheme()
+    else this.SetDarkTheme()
+  },
+  SetColorTheme() {
+    if (localStorage['color-theme'] == undefined) {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) utils.SetDarkTheme()
+      else utils.SetWhiteTheme()
+    } else {
+      if (utils.CheckIfColorThemeIsBlack()) utils.SetDarkTheme()
+      else utils.SetWhiteTheme()
+    }
+  },
+  SetDarkTheme() {
+    document.body.classList.add('dark-theme')
+    this.img_change_color_theme.src = '/icons/SolarSunBold.svg'
+    localStorage['color-theme'] = 'dark-theme'
+  },
+  SetWhiteTheme() {
+    document.body.classList.remove('dark-theme')
+    this.img_change_color_theme.src = '/icons/SolarMoonBold.svg'
+    localStorage['color-theme'] = ''
+  },
+  CheckIfColorThemeIsBlack() {
+    const color_theme = localStorage['color-theme']
+    return color_theme == 'dark-theme' ? true : false
+  },
+  DeleteDOMElement: (element) => element.remove(),
+  CreateBtn() {
+    let btn = document.createElement('button')
+    btn.type = 'button'
+    return btn
+  },
+  CreateTextBtn(text) {
+    let btn = this.CreateBtn()
+    btn.innerText = text
+    return btn
+  },
+  CreateIconBtn(icon, alt) {
+    let new_btn = this.CreateBtn()
+    let new_img = document.createElement('img')
+    new_img.src = icon
+    new_img.alt = alt
+    new_btn.appendChild(new_img)
+    return new_btn
+  },
+}
+
+const popups = {
+  TITLE_ICON: 'icon-title-box',
+  INFORMATION_ERROR_ICON: '/icons/ZondiconsInformationOutlineError.svg',
+  INFORMATION_SUCCESS_ICON: '/icons/ZondiconsInformationOutlineSuccess.svg',
+
+  /** Creates a dialog that allows you to confirm or cancel an action.
+   * @param {String} new_title - Dialog title.
+   * @param {String} new_icon - Url of the icon.
+   * @param {String} icon_alt - Alt message of the icon.
+   * @param {String} css_classes - CSS classes for the dialog.
+   * @param {String} new_description - Dialog description.
+   * @returns {Object} An object containing functions to interact with the dialog.
+   *
+   * @since 1.0.0
+   */
+  CreateConfirmationDialog(new_title, new_icon, icon_alt, css_classes, new_description) {
+    const dialog = document.createElement('dialog')
+    const title_box = document.createElement('div')
+    const title = document.createElement('h3')
+    const description = document.createElement('h3')
+    const icon = document.createElement('img')
+    const btn_group = document.createElement('div')
+    const btn_confirm = utils.CreateTextBtn(internationalization.translations.confirm[root.lang])
+    const btn_cancel = utils.CreateTextBtn(internationalization.translations.cancel[root.lang])
+
+    dialog.classList.add(css_classes, 'dialog', 'slide-from-and-stop')
+
+    title_box.classList.add(this.TITLE_ICON)
+    title.classList.add('dialog-title')
+
+    description.classList.add('dialog-msg')
+
+    btn_group.classList.add('btn-group')
+    btn_confirm.classList.add('btn', 'btn-confirm')
+    btn_cancel.classList.add('btn', 'btn-cancel')
+
+    title.innerText = `${new_title}:`
+    description.innerText = new_description
+
+    icon.src = new_icon[0] == '/' ? new_icon : `/${new_icon}`
+    icon.alt = icon_alt
+
+    title_box.appendChild(icon)
+    title_box.appendChild(title)
+
+    btn_group.appendChild(btn_cancel)
+    btn_group.appendChild(btn_confirm)
+
+    dialog.appendChild(title_box)
+    dialog.appendChild(description)
+    dialog.appendChild(btn_group)
+
+    document.body.appendChild(dialog)
+
+    btn_confirm.addEventListener('click', () => dialog.remove())
+    btn_cancel.addEventListener('click', () => dialog.remove())
+
+    return { btn_confirm, btn_cancel }
+  },
+
+  /** Creates a notification with an icon included.
+   * @param {String} new_msg - Message to be shown in the popup.
+   * @param {String} new_icon - Url of the icon.
+   * @param {String} icon_alt - Alt message of the icon.
+   * @param {String} css_classes - CSS classes for the popup.
+   *
+   * @since 1.0.0
+   */
+  CreateNotificationWithIcon(new_msg, new_icon, icon_alt, css_classes) {
+    const notification = document.createElement('dialog')
+    const title_box = document.createElement('div')
+    const msg = document.createElement('h3')
+    const icon = document.createElement('img')
+
+    notification.classList.add(css_classes, 'notification', 'slide-from-top')
+    title_box.classList.add(this.TITLE_ICON)
+    msg.classList.add('notification-title')
+
+    msg.innerText = new_msg
+
+    icon.src = new_icon[0] == '/' ? new_icon : `/${new_icon}`
+    icon.alt = icon_alt
+
+    title_box.appendChild(icon)
+    title_box.appendChild(msg)
+
+    notification.appendChild(title_box)
+    notification.appendChild(msg)
+
+    document.body.appendChild(notification)
+
+    setTimeout(() => notification.remove(), 4000)
+  },
+}
 
 /** Module for handling internationalization.
  * @module useInternationalization
@@ -169,151 +309,6 @@ function useInternationalization({ utils }) {
   return { translations, languages, Translate, ChangeLanguage, GenerateLanguageOptions, SetDefaultLanguage }
 }
 
-const utils = {
-  ICONS: '/icons/country_flags/',
-  ChangeColorTheme() {
-    if (this.CheckIfColorThemeIsBlack()) this.SetWhiteTheme()
-    else this.SetDarkTheme()
-  },
-  SetColorTheme() {
-    if (localStorage['color-theme'] == undefined) {
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) utils.SetDarkTheme()
-      else utils.SetWhiteTheme()
-    } else {
-      if (utils.CheckIfColorThemeIsBlack()) utils.SetDarkTheme()
-      else utils.SetWhiteTheme()
-    }
-  },
-  SetDarkTheme() {
-    document.body.classList.add('dark-theme')
-    img_change_color_theme.src = '/icons/SolarSunBold.svg'
-    localStorage['color-theme'] = 'dark-theme'
-  },
-  SetWhiteTheme() {
-    document.body.classList.remove('dark-theme')
-    img_change_color_theme.src = '/icons/SolarMoonBold.svg'
-    localStorage['color-theme'] = ''
-  },
-  CheckIfColorThemeIsBlack() {
-    const color_theme = localStorage['color-theme']
-    return color_theme == 'dark-theme' ? true : false
-  },
-  DeleteDOMElement: (element) => element.remove(),
-  CreateBtn() {
-    let btn = document.createElement('button')
-    btn.type = 'button'
-    return btn
-  },
-  CreateTextBtn(text) {
-    let btn = this.CreateBtn()
-    btn.innerText = text
-    return btn
-  },
-  CreateIconBtn(icon, alt) {
-    let new_btn = this.CreateBtn()
-    let new_img = document.createElement('img')
-    new_img.src = icon
-    new_img.alt = alt
-    new_btn.appendChild(new_img)
-    return new_btn
-  },
-}
-
-const popups = {
-  TITLE_ICON: 'icon-title-box',
-  INFORMATION_ERROR_ICON: '/icons/ZondiconsInformationOutlineError.svg',
-  INFORMATION_SUCCESS_ICON: '/icons/ZondiconsInformationOutlineSuccess.svg',
-
-  /** Creates a dialog that allows you to confirm or cancel an action.
-   * @param {String} new_title - Dialog title.
-   * @param {String} new_icon - Url of the icon.
-   * @param {String} icon_alt - Alt message of the icon.
-   * @param {String} css_classes - CSS classes for the dialog.
-   * @param {String} new_description - Dialog description.
-   * @returns {Object} An object containing functions to interact with the dialog.
-   *
-   * @since 1.0.0
-   */
-  CreateConfirmationDialog(new_title, new_icon, icon_alt, css_classes, new_description) {
-    const dialog = document.createElement('dialog')
-    const title_box = document.createElement('div')
-    const title = document.createElement('h3')
-    const description = document.createElement('h3')
-    const icon = document.createElement('img')
-    const btn_group = document.createElement('div')
-    const btn_confirm = utils.CreateTextBtn(internationalization.translations.confirm[root.lang])
-    const btn_cancel = utils.CreateTextBtn(internationalization.translations.cancel[root.lang])
-
-    dialog.classList.add(css_classes, 'dialog', 'fade-in')
-
-    title_box.classList.add(this.TITLE_ICON)
-    title.classList.add('dialog-title')
-
-    description.classList.add('dialog-msg')
-
-    btn_group.classList.add('btn-group')
-    btn_confirm.classList.add('btn', 'btn-confirm')
-    btn_cancel.classList.add('btn', 'btn-cancel')
-
-    title.innerText = `${new_title}:`
-    description.innerText = new_description
-
-    icon.src = new_icon[0] == '/' ? new_icon : `/${new_icon}`
-    icon.alt = icon_alt
-
-    title_box.appendChild(icon)
-    title_box.appendChild(title)
-
-    btn_group.appendChild(btn_cancel)
-    btn_group.appendChild(btn_confirm)
-
-    dialog.appendChild(title_box)
-    dialog.appendChild(description)
-    dialog.appendChild(btn_group)
-
-    document.body.appendChild(dialog)
-
-    btn_confirm.addEventListener('click', () => dialog.remove())
-    btn_cancel.addEventListener('click', () => dialog.remove())
-
-    return { btn_confirm, btn_cancel }
-  },
-
-  /** Creates a notification with an icon included.
-   * @param {String} new_msg - Message to be shown in the popup.
-   * @param {String} new_icon - Url of the icon.
-   * @param {String} icon_alt - Alt message of the icon.
-   * @param {String} css_classes - CSS classes for the popup.
-   *
-   * @since 1.0.0
-   */
-  CreateNotificationWithIcon(new_msg, new_icon, icon_alt, css_classes) {
-    const notification = document.createElement('dialog')
-    const title_box = document.createElement('div')
-    const msg = document.createElement('h3')
-    const icon = document.createElement('img')
-
-    notification.classList.add(css_classes, 'notification', 'slide-from-top')
-    title_box.classList.add(this.TITLE_ICON)
-    msg.classList.add('notification-title')
-
-    msg.innerText = new_msg
-
-    icon.src = new_icon[0] == '/' ? new_icon : `/${new_icon}`
-    icon.alt = icon_alt
-
-    title_box.appendChild(icon)
-    title_box.appendChild(msg)
-
-    notification.appendChild(title_box)
-    notification.appendChild(msg)
-
-    document.body.appendChild(notification)
-
-    setTimeout(() => notification.remove(), 4000)
-  },
-}
-
 /** Manages the functionality of a to-do list.
  * @module useTodo
  * @param {Object} options - Configuration options for the module.
@@ -323,6 +318,9 @@ const popups = {
  * @returns {Object} An object containing functions to interact with the to-do list.
  */
 function useTodo({ target, utils, popups, internationalization }) {
+  const btn_save = document.querySelector("[data-btn='save-progress']")
+  const btn_submit = document.querySelector("[data-btn='submit']")
+
   const todo_state = {
     CHECK: 'is-checked',
     EDIT: 'is-editing',
@@ -381,7 +379,7 @@ function useTodo({ target, utils, popups, internationalization }) {
       todo.id = crypto.randomUUID()
       todo_value.innerText = value
 
-      todo.classList = class_list ?? 'todo fade-in'
+      todo.classList = class_list ?? 'todo slide-from-and-stop'
       btn_check.classList = btn_check_class_list ?? `${todo_state.BTN_CHECK} ${todo_state.BTN_CONTROL} ${todo_state.ICON_BTN}`
       btn_edit.classList = btn_edit_class_list ?? `${todo_state.BTN_EDIT} ${todo_state.ICON_BTN}`
       btn_delete.classList = btn_delete_class_list ?? `${todo_state.BTN_DELETE} ${todo_state.BTN_CONTROL} ${todo_state.ICON_BTN}`
@@ -573,6 +571,12 @@ function useTodo({ target, utils, popups, internationalization }) {
     return 0
   }
 
+  btn_submit.addEventListener('click', (event) => {
+    event.preventDefault()
+    if (input.value) todos.AddTodo({ value: input.value })
+    else popups.CreateNotificationWithIcon(internationalization.translations.add_todo[root.lang], '/icons/ZondiconsInformationOutlineInform.svg', 'inform icon', 'inform-notification')
+  })
+
   return { AddTodo, EditTodo, UpdateTodo, CompleteTodo, SaveProgressInLocalStorage, LoadTodos, CheckIfTodoExist }
 }
 
@@ -584,11 +588,5 @@ internationalization.GenerateLanguageOptions()
 internationalization.SetDefaultLanguage()
 
 todos.LoadTodos()
-
-btn_submit.addEventListener('click', (event) => {
-  event.preventDefault()
-  if (input.value) todos.AddTodo({ value: input.value })
-  else popups.CreateNotificationWithIcon(internationalization.translations.add_todo[root.lang], '/icons/ZondiconsInformationOutlineInform.svg', 'inform icon', 'inform-notification')
-})
 
 btn_change_color_theme.addEventListener('click', () => utils.ChangeColorTheme())

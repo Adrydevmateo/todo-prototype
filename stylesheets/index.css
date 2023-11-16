@@ -225,8 +225,8 @@ ol {
   animation-duration: var(--animation-duration);
 }
 
-.fade-in {
-  animation-name: fade-in;
+.slide-from-and-stop {
+  animation-name: slide-from-and-stop;
   animation-duration: var(--animation-duration);
 }
 /* Animation end */
@@ -480,16 +480,24 @@ ol {
   }
 }
 
-@keyframes fade-in {
+@keyframes slide-from-and-stop {
   0% {
-    opacity: 0;
+    top: var(--animation-slide-from-top-initial-from);
   }
 
   25% {
-    opacity: 0.8;
+    top: var(--animation-slide-from-top-initial-to);
   }
 
-  30% {
-    opacity: 1;
+  50% {
+    top: var(--animation-slide-from-top-initial-to);
+  }
+
+  75% {
+    top: var(--animation-slide-from-top-initial-to);
+  }
+
+  100% {
+    top: var(--animation-slide-from-top-initial-to);
   }
 }
